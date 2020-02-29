@@ -1,0 +1,4 @@
+启动Consul
+consul.exe agent -dev 本地模式，将会使用127.0.0.1 的ip地址
+consul.exe agent -dev -client 192.168.3.8 -ui  默认端口8500
+consul agent -dev -client 192.168.3.8 -ui

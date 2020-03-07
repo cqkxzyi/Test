@@ -19,4 +19,9 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Models
 
         public string ProductID { get; set; }
     }
+    public class OrderDTO2 
+    {
+        public string ID { get; set; }
+
+    }
 }

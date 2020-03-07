@@ -118,24 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Error_InvalidFilePath" xml:space="preserve">
-    <value>File path must be a non-empty string.</value>
+    <value>文件名不能为null</value>
   </data>
   <data name="Error_InvalidService" xml:space="preserve">
-    <value>Service key ‘{0}’ must be available.</value>
+    <value>Consul的服务名不存在</value>
   </data>
   <data name="Error_JSONParseError" xml:space="preserve">
-    <value>Could not parse the JSON file.</value>
+    <value>转换成json错误</value>
   </data>
-  <data name="Error_KeyIsDuplicated" xml:space="preserve">
-    <value>A duplicate key '{0}' was found.</value>
+  <data name="Error_KeyNotExist" xml:space="preserve">
+    <value>{key}不存在</value>
   </data>
   <data name="Error_Request" xml:space="preserve">
-    <value>Service key ‘{0}’ response a bad code.</value>
-  </data>
-  <data name="Error_UnsupportedJSONToken" xml:space="preserve">
-    <value>Unsupported JSON token '{0}' was found.</value>
+    <value>服务器返回异常</value>
   </data>
   <data name="Error_ValueNotExist" xml:space="preserve">
-    <value>Service key ‘{0}’ has none value.</value>
+    <value>不存在属性值</value>
   </data>
 </root>

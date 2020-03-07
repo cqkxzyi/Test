@@ -15,12 +15,21 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading;
 
-namespace Navyblue.Extension.Configuration.Consul
+namespace Extension.Configuration.Consul
 {
     /// <summary>
+    /// 1外部调用总入口
     /// </summary>
     public static class ConsulConfigurationBuilderExtensions
     {
+        /// <summary>
+        /// 1添加console资源
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="serviceKey"></param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
         public static IConfigurationBuilder AddConsul(this IConfigurationBuilder builder, string serviceKey, CancellationToken cancellationToken, Action<IConsulConfigurationSource> options)
         {
             ConsulConfigurationSource consulConfigSource = new ConsulConfigurationSource(serviceKey, cancellationToken);

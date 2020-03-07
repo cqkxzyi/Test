@@ -16,6 +16,9 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Models
             optionsBuilder.UseSqlServer(ConnStr);
         }
 
-        public DbSet<Order> Orders { get; set; }
+        /// <summary>
+        /// 数据表注册
+        /// </summary>
+        public DbSet<Orders> Orders { get; set; }
     }
 }

@@ -62,5 +62,19 @@ namespace WebTest.Controllers
         public void Put(int id, [FromBody] string value)
         {
         }
+
+
+
+        [HttpGet]
+        public void GetValue([FromBody] string value)
+        {
+            string a = "";
+        }
+
+        [Route("/api/GetValue2")]
+        public void GetValue2([FromBody] string value)
+        {
+            string a = "";
+        }
     }
 }

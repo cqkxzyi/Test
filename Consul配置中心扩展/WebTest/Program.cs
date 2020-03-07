@@ -14,7 +14,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Navyblue.Extension.Configuration.Consul;
+using Extension.Configuration.Consul;
 using System;
 using System.Threading;
 using Consul;
@@ -30,29 +30,33 @@ namespace WebTest
             WebHost.CreateDefaultBuilder(args).ConfigureAppConfiguration(
                 (hostingContext, builder) =>
                 {
-                    builder.AddConsul("userservice", cancellationTokenSource.Token, source =>
+                    builder.AddConsul("json", cancellationTokenSource.Token, source =>
                     {
-                        source.ConsulClientConfiguration = cco => cco.Address = new Uri("http://localhost:8500");
+                        source.ConsulClientConfiguration = (
+                                cco => cco.Address = new Uri("http://192.168.3.6:8500")
+                        );
                         source.Optional = true;
-                        source.ReloadOnChange = true;
-                        source.ReloadDelay = 300;
+                        source.ReloadOnChange = false;
+                        source.ReloadDelay = 10000;
                         source.QueryOptions = new QueryOptions
                         {
                             WaitIndex = 0
                         };
                     });
 
-                    builder.AddConsul("commonservice", cancellationTokenSource.Token, source =>
-                    {
-                        source.ConsulClientConfiguration = cco => cco.Address = new Uri("http://localhost:8500");
-                        source.Optional = true;
-                        source.ReloadOnChange = true;
-                        source.ReloadDelay = 300;
-                        source.QueryOptions = new QueryOptions
-                        {
-                            WaitIndex = 0
-                        };
-                    });
+                    //builder.AddConsul("commonservice", cancellationTokenSource.Token, source =>
+                    //{
+                    //    source.ConsulClientConfiguration = (
+                    //            cco => cco.Address = new Uri("http://192.168.3.6:8500")
+                    //    );
+                    //    source.Optional = true;
+                    //    source.ReloadOnChange = true;
+                    //    source.ReloadDelay = 5000;
+                    //    source.QueryOptions = new QueryOptions
+                    //    {
+                    //        WaitIndex = 0
+                    //    };
+                    //});
                 }).UseStartup<Startup>().Build().Run();
         }
     }

@@ -11,13 +11,13 @@
 // </copyright>
 // *****************************************************************************************************************
 
+using Extension.Configuration.Consul;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Navyblue.Extension.Configuration.Consul;
 using System.Linq;
 
 namespace WebTest
@@ -52,14 +52,22 @@ namespace WebTest
             }
 
             app.UseHttpsRedirection();
+
+            //路由中间件，解析路由信息
+            app.UseRouting();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0).AddMvcOptions(p=>p.EnableEndpointRouting=false);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddMvcOptions(p=>p.EnableEndpointRouting=false);
             var consulProvider = this.ConfigurationRoot.Providers.Where(p => p.GetType() == typeof(ConsulConfigurationProvider)).ToList();
-            var configurationSection = this.ConfigurationRoot.GetChildren();
+
+             var configurationSection = this.ConfigurationRoot.GetChildren();
+
+
+            services.AddControllers();
         }
     }
 }

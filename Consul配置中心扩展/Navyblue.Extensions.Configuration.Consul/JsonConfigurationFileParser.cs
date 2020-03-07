@@ -1,6 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
+﻿
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -8,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
-namespace Navyblue.Extension.Configuration.Consul
+namespace Extension.Configuration.Consul
 {
     internal class JsonConfigurationFileParser
     {
@@ -24,6 +22,7 @@ namespace Navyblue.Extension.Configuration.Consul
 
         public static IDictionary<string, string> Parse(string serviceKey, Stream input)
             => new JsonConfigurationFileParser().ParseStream(serviceKey, input);
+
 
         private void EnterContext(string context)
         {
@@ -41,18 +40,21 @@ namespace Navyblue.Extension.Configuration.Consul
         {
             this._data.Clear();
 
-            using (var reader = new StreamReader(input))
-            using (JsonDocument doc = JsonDocument.Parse(reader.ReadToEnd(), new JsonReaderOptions { CommentHandling = JsonCommentHandling.Skip }))
+            using (var reader = new StreamReader(input)) 
             {
-                if (doc.RootElement.Type != JsonValueType.Object)
+                JsonDocumentOptions option = new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip };
+                using (JsonDocument doc = JsonDocument.Parse(reader.ReadToEnd(), option))
                 {
-                    throw new FormatException(Resources.FormatError_UnsupportedJSONToken(doc.RootElement.Type));
+                    if (doc.RootElement.ValueKind != JsonValueKind.Object)
+                    {
+                        //throw new FormatException("不知道是什么");
+                    }
+
+                    this.VisitElement(serviceKey, doc.RootElement);
                 }
 
-                this.VisitElement(serviceKey, doc.RootElement);
+                return this._data;
             }
-
-            return this._data;
         }
 
         private void VisitElement(string serviceKey, JsonElement element)
@@ -67,13 +69,13 @@ namespace Navyblue.Extension.Configuration.Consul
 
         private void VisitValue(string serviceKey, JsonElement value)
         {
-            switch (value.Type)
+            switch (value.ValueKind)
             {
-                case JsonValueType.Object:
+                case JsonValueKind.Object:
                     this.VisitElement(serviceKey, value);
                     break;
 
-                case JsonValueType.Array:
+                case JsonValueKind.Array:
                     var index = 0;
                     foreach (var arrayElement in value.EnumerateArray())
                     {
@@ -82,25 +84,24 @@ namespace Navyblue.Extension.Configuration.Consul
                         this.ExitContext();
                         index++;
                     }
-
                     break;
 
-                case JsonValueType.Number:
-                case JsonValueType.String:
-                case JsonValueType.True:
-                case JsonValueType.False:
-                case JsonValueType.Null:
+                case JsonValueKind.Number:
+                case JsonValueKind.String:
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                case JsonValueKind.Null:
                     var key = serviceKey + ":" + this._currentPath;
                     if (this._data.ContainsKey(key))
                     {
-                        throw new FormatException(Resources.FormatError_KeyIsDuplicated(key));
+                        throw new FormatException("值不存在");
                     }
 
                     this._data[key] = value.ToString();
                     break;
 
                 default:
-                    throw new FormatException(Resources.FormatError_UnsupportedJSONToken(value.Type));
+                    throw new FormatException("");
             }
         }
     }

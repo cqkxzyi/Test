@@ -1,53 +1,56 @@
-﻿// *****************************************************************************************************************
-// Project          : Navyblue
-// File             : ConsulConfigurationProvider.cs
-// Created          : 2019-05-23  19:30
-//
-// Last Modified By : (jstsmaxx@163.com)
-// Last Modified On : 2019-05-24  11:43
-// *****************************************************************************************************************
-// <copyright file="ConsulConfigurationProvider.cs" company="Shanghai Future Mdt InfoTech Ltd.">
-//     Copyright ©  2012-2019 Mdt InfoTech Ltd. All rights reserved.
-// </copyright>
-// *****************************************************************************************************************
-
+﻿
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
-namespace Navyblue.Extension.Configuration.Consul
+namespace Extension.Configuration.Consul
 {
+    /// <summary>
+    /// 3提供器
+    /// </summary>
     public sealed class ConsulConfigurationProvider : ConfigurationProvider
     {
-        private readonly ConsulConfigurationParser configurationParser;
+        private readonly ConsulParser consulParser;
         private readonly IConsulConfigurationSource source;
 
-        public ConsulConfigurationProvider(IConsulConfigurationSource source, ConsulConfigurationParser configurationParser)
+        /// <summary>
+        /// 3提供器
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="consulParser"></param>
+        public ConsulConfigurationProvider(IConsulConfigurationSource source, ConsulParser consulParser)
         {
-            this.configurationParser = configurationParser;
+            this.consulParser = consulParser;
             this.source = source;
 
             if (source.ReloadOnChange)
             {
                 ChangeToken.OnChange(
-                    () => this.configurationParser.Watch(this.source.ServiceKey, this.source.CancellationToken),
-                    async () =>
-                    {
-                        await this.configurationParser.GetConfig(true, source).ConfigureAwait(false);
+                    () => this.consulParser.Watch(this.source.ServiceKey, this.source.CancellationToken),
+                   
+                    //async () =>
+                    //{
+                    //    //await this.consulParser.GetConfig(true, source).ConfigureAwait(false);
+                    //    //Thread.Sleep(source.ReloadDelay);
+                    //       Load();
+                    //})
 
-                        Thread.Sleep(source.ReloadDelay);
-
-                        this.OnReload();
-                    });
+                    () => {  Load();  });
             }
         }
 
+        /// <summary>
+        /// 重新加载数据源
+        /// </summary>
         public override void Load()
         {
             try
             {
-                this.Data = this.configurationParser.GetConfig(false, this.source).ConfigureAwait(false).GetAwaiter().GetResult();
+                this.Data = this.consulParser.GetConfig(false, this.source).ConfigureAwait(false).GetAwaiter().GetResult();
+
+                base.OnReload();
             }
             catch (AggregateException aggregateException)
             {

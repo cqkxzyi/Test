@@ -25,25 +25,22 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Repositories
         {
             using (var trans = DbContext.Database.BeginTransaction())
             {
-                var orderEntity = new Order()
+                var orderEntity = new Orders()
                 {
                     ID = GenerateOrderID(),
                     OrderUserID = order.OrderUserID,
                     OrderTime = order.OrderTime,
-                    OrderItems = null,
                     ProductID = order.ProductID // For demo use
                 };
 
                 DbContext.Orders.Add(orderEntity);
                 await DbContext.SaveChangesAsync();
 
-                // When using EF, no need to pass transaction
                 var orderMessage = new OrderMessage()
                 {
                     ID = orderEntity.ID,
                     OrderUserID = orderEntity.OrderUserID,
                     OrderTime = orderEntity.OrderTime,
-                    OrderItems = null,
                     ProductID = orderEntity.ProductID // For demo use
                 };
                 
@@ -55,6 +52,11 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Repositories
             return true;
         }
 
+        /// <summary>
+        /// 创建订单
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public async Task<bool> CreateOrderByDapper(IOrder order)
         {
             using (var conn = new SqlConnection(ConnStr))
@@ -63,13 +65,13 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Repositories
                 using (var trans = conn.BeginTransaction())
                 {
                     // business code here
-                    string sqlCommand = @"INSERT INTO [dbo].[Orders](OrderID, OrderTime, OrderUserID, ProductID)
-                                                                VALUES(@OrderID, @OrderTime, @OrderUserID, @ProductID)";
+                    string sqlCommand = @"INSERT INTO [dbo].[Orders](ID, OrderTime, OrderUserID, ProductID)
+                                                                VALUES(@ID, @OrderTime, @OrderUserID, @ProductID)";
 
                     order.ID = GenerateOrderID();
                     await conn.ExecuteAsync(sqlCommand, param: new
                     {
-                        OrderID = order.ID,
+                        ID = order.ID,
                         OrderTime = DateTime.Now,
                         OrderUserID = order.OrderUserID,
                         ProductID = order.ProductID

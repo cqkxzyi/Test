@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Navyblue.Extensions.Configuration.Consul\Navyblue.Extension.Configuration.Consul.csproj" />
+    <ProjectReference Include="..\Navyblue.Extensions.Configuration.Consul\Extension.Configuration.Consul.csproj" />
   </ItemGroup>
 
 </Project>

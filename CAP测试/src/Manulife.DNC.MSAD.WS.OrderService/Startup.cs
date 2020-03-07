@@ -8,6 +8,7 @@ using Microsoft.Extensions.PlatformAbstractions;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace Manulife.DNC.MSAD.WS.OrderService
 {
@@ -20,7 +21,7 @@ namespace Manulife.DNC.MSAD.WS.OrderService
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
@@ -33,6 +34,7 @@ namespace Manulife.DNC.MSAD.WS.OrderService
 
             // Dapper-ConnString
             services.AddSingleton(Configuration["DB:OrderDB"]);
+
 
             // CAP
             services.AddCap(x =>
@@ -50,14 +52,20 @@ namespace Manulife.DNC.MSAD.WS.OrderService
                     cfg.Password = Configuration["MQ:Password"]; 
                 }); // RabbitMQ
 
-                x.UseDashboard(); // Dashboard
+                x.UseDashboard(); // 启动仪表盘
 
-                // Below settings is just for demo
                 x.FailedRetryCount = 2;
                 x.FailedRetryInterval = 5;
+                x.SucceedMessageExpiredAfter = 60*2;
             });
 
-            // Swagger
+            //注册Swagger生成器，定义一个和多个Swagger 文档
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc(Configuration["Service:DocName"], new Info { Title = "My API", Version = "v1" });
+            //    c.DescribeAllEnumsAsStrings();
+            //});
+
             services.AddSwaggerGen(s =>
             {
                 s.SwaggerDoc(Configuration["Service:DocName"], new Info
@@ -74,11 +82,14 @@ namespace Manulife.DNC.MSAD.WS.OrderService
 
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
                 var xmlPath = Path.Combine(basePath, Configuration["Service:XmlFile"]);
+                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 s.IncludeXmlComments(xmlPath);
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
@@ -91,16 +102,20 @@ namespace Manulife.DNC.MSAD.WS.OrderService
             // CAP
             app.UseCap();
 
-            // Swagger
+            //启用中间件服务生成Swagger作为JSON终结点
             app.UseSwagger(c =>
             {
                 c.RouteTemplate = "doc/{documentName}/swagger.json";
             });
+            
+            //启用中间件服务对swagger-ui，指定Swagger JSON终结点
             app.UseSwaggerUI(s =>
             {
                 s.SwaggerEndpoint($"/doc/{Configuration["Service:DocName"]}/swagger.json",
-                    $"{Configuration["Service:Name"]} {Configuration["Service:Version"]}");
+                    $"{Configuration["Service:Name"]} 版本：{Configuration["Service:Version"]}");
+                s.RoutePrefix = string.Empty;//根目录处使用
             });
+
         }
     }
 }

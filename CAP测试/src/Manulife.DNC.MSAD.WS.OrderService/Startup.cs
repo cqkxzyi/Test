@@ -39,9 +39,10 @@ namespace Manulife.DNC.MSAD.WS.OrderService
             // CAP
             services.AddCap(x =>
             {
-                x.UseEntityFramework<OrderDbContext>(); // EF
+                x.UseSqlServer(Configuration["DB:OrderDB"]); // SQL Server 只能二选一
 
-                x.UseSqlServer(Configuration["DB:OrderDB"]); // SQL Server
+                //x.UseEntityFramework<OrderDbContext>(); // EF  只能二选一
+
 
                 x.UseRabbitMQ(cfg =>
                 {
@@ -49,14 +50,15 @@ namespace Manulife.DNC.MSAD.WS.OrderService
                     cfg.VirtualHost = Configuration["MQ:VirtualHost"];
                     cfg.Port = Convert.ToInt32(Configuration["MQ:Port"]);
                     cfg.UserName = Configuration["MQ:UserName"];
-                    cfg.Password = Configuration["MQ:Password"]; 
+                    cfg.Password = Configuration["MQ:Password"];
+                    cfg.ExchangeName = Configuration["MQ:ExchangeName"];
                 }); // RabbitMQ
 
                 x.UseDashboard(); // 启动仪表盘
 
                 x.FailedRetryCount = 2;
                 x.FailedRetryInterval = 5;
-                x.SucceedMessageExpiredAfter = 60*2;
+                //x.SucceedMessageExpiredAfter = 60*2;//2分钟
             });
 
             //注册Swagger生成器，定义一个和多个Swagger 文档

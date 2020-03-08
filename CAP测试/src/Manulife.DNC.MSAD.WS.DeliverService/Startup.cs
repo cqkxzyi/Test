@@ -21,7 +21,7 @@ namespace Manulife.DNC.MSAD.WS.DeliveryService
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
@@ -49,10 +49,13 @@ namespace Manulife.DNC.MSAD.WS.DeliveryService
                     cfg.Port = Convert.ToInt32(Configuration["MQ:Port"]);
                     cfg.UserName = Configuration["MQ:UserName"];
                     cfg.Password = Configuration["MQ:Password"];
+                    cfg.ExchangeName = Configuration["MQ:ExchangeName"];
                 }); // RabbitMQ
 
+                x.UseDashboard(); // 启动仪表盘
+
                 // Below settings is just for demo
-                x.FailedRetryCount = 2;
+                x.FailedRetryCount = 1;
                 x.FailedRetryInterval = 5;
             });
 
@@ -77,7 +80,7 @@ namespace Manulife.DNC.MSAD.WS.DeliveryService
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+      
         public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider, IHostingEnvironment env, IApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
@@ -99,6 +102,7 @@ namespace Manulife.DNC.MSAD.WS.DeliveryService
             {
                 s.SwaggerEndpoint($"/doc/{Configuration["Service:DocName"]}/swagger.json",
                     $"{Configuration["Service:Name"]} {Configuration["Service:Version"]}");
+                s.RoutePrefix = string.Empty;//根目录处使用
             });
         }
     }

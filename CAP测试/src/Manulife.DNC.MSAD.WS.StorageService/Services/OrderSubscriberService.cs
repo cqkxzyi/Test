@@ -20,8 +20,15 @@ namespace Manulife.DNC.MSAD.WS.StorageService.Services
         [CapSubscribe(EventConstants.EVENT_NAME_CREATE_ORDER)]
         public async Task ConsumeOrderMessage(OrderMessage message)
         {
-            await Console.Out.WriteLineAsync($"[StorageService] Received message : {JsonHelper.SerializeObject(message)}");
-            await UpdateStorageNumberAsync(message);
+            try
+            {
+                await Console.Out.WriteLineAsync($"[StorageService] Received message : {JsonHelper.SerializeObject(message)}");
+                await UpdateStorageNumberAsync(message);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private async Task<bool> UpdateStorageNumberAsync(OrderMessage order)
@@ -29,12 +36,14 @@ namespace Manulife.DNC.MSAD.WS.StorageService.Services
             //throw new Exception("test"); // just for demo use
             using (var conn = new SqlConnection(_connStr))
             {
-                string sqlCommand = @"UPDATE [dbo].[Storages] SET StorageNumber = StorageNumber - 1
-                                                                WHERE StorageID = @ProductID";
+                string sqlCommand = @"INSERT INTO [dbo].[Storage] (ID, StorageNumber, CreatedTime)
+                                                            VALUES (@ID, @StorageNumber, @CreatedTime)";
 
                 int count = await conn.ExecuteAsync(sqlCommand, param: new
                 {
-                    ProductID = order.ProductID
+                    ID = Guid.NewGuid().ToString(),
+                    StorageNumber = "StorageNumber" + order.OrderUserID,
+                    CreatedTime = DateTime.Now
                 });
 
                 return count > 0;

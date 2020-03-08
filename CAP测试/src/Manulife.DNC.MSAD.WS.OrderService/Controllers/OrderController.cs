@@ -1,6 +1,9 @@
-﻿using Manulife.DNC.MSAD.WS.OrderService.Models;
+﻿using Manulife.DNC.MSAD.WS.Events;
+using Manulife.DNC.MSAD.WS.OrderService.Models;
 using Manulife.DNC.MSAD.WS.OrderService.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Manulife.DNC.MSAD.WS.OrderService.Controllers
@@ -56,7 +59,7 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Controllers
         }
 
         /// <summary>
-        /// 这是一个带参数的get请求Test3
+        /// 这是一个PostBySql函数
         /// </summary>
         /// <remarks>
         /// 例子:Get api/Test/Test3/zhangyi
@@ -72,23 +75,39 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Controllers
         [HttpPost]
         public async Task<string> PostBySql([FromBody]OrderDTO orderDTO)
         {
-            if (orderDTO == null || orderDTO.ID==null)
-                return "解析参数异常";
+            try
+            {
+                if (orderDTO == null || orderDTO.ID == null)
+                    return "解析参数异常";
 
-            // var result = OrderRepository.CreateOrderByDapper(orderDTO).GetAwaiter().GetResult();
-            var result = await OrderRepository.CreateOrderByDapper(orderDTO);
+                // var result = OrderRepository.CreateOrderByDapper(orderDTO).GetAwaiter().GetResult();
+                var result = await OrderRepository.CreateOrderByDapper(orderDTO);
 
-            return result ? "Post Order Success" : "Post Order Failed";
+                return result ? "Post Order Success" : "Post Order Failed";
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+           
         }
 
         [HttpPost]
         public string PostByEf([FromBody]OrderDTO orderDTO)
         {
+            List<OrderItems> list = new List<OrderItems> {
+                new OrderItems(){ ID="1"},
+                new OrderItems(){ ID="2" }
+            };
+            OrderDTO a = new OrderDTO();
+            a.ID = "11";
+            a.OrderItems = list;
+            string bb=JsonConvert.SerializeObject(a);
+
+
+
             if (orderDTO == null || orderDTO.ID == null)
                 return "解析参数异常";
-
-            // var result = OrderRepository.CreateOrderByDapper(orderDTO).GetAwaiter().GetResult();
-            //var result = await OrderRepository.CreateOrderByDapper(orderDTO);
 
             var result = OrderRepository.CreateOrderByEF(orderDTO).GetAwaiter().GetResult();
 

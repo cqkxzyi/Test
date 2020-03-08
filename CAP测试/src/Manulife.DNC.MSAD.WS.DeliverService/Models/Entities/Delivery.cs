@@ -7,7 +7,7 @@ namespace Manulife.DNC.MSAD.WS.DeliveryService.Models
     [Table("Deliveries")]
     public class Delivery : IDelivery
     {
-        [Column("DeliveryID")]
+        [Column("ID")]
         public string ID { get; set; }
 
         [Column("OrderID")]

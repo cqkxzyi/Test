@@ -11,7 +11,7 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Models
 
         public DateTime OrderTime { get; set; }
 
-        public List<IOrderItems> OrderItems { get; set; }
+        public List<OrderItems> OrderItems { get; set; }
 
         public string OrderUserID { get; set; }
 

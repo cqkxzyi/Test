@@ -49,10 +49,12 @@ namespace Manulife.DNC.MSAD.WS.StorageService
                     cfg.Port = Convert.ToInt32(Configuration["MQ:Port"]);
                     cfg.UserName = Configuration["MQ:UserName"];
                     cfg.Password = Configuration["MQ:Password"];
+                    cfg.ExchangeName = Configuration["MQ:ExchangeName"];
                 }); // RabbitMQ
+                x.UseDashboard(); // 启动仪表盘
 
                 // Below settings is just for demo
-                x.FailedRetryCount = 2;
+                x.FailedRetryCount = 1;
                 x.FailedRetryInterval = 5;
             });
 
@@ -99,6 +101,7 @@ namespace Manulife.DNC.MSAD.WS.StorageService
             {
                 s.SwaggerEndpoint($"/doc/{Configuration["Service:DocName"]}/swagger.json",
                     $"{Configuration["Service:Name"]} {Configuration["Service:Version"]}");
+                s.RoutePrefix = string.Empty;//根目录处使用
             });
         }
     }

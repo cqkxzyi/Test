@@ -29,7 +29,7 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Repositories
                 {
                     ID = GenerateOrderID(),
                     OrderUserID = order.OrderUserID,
-                    OrderTime = order.OrderTime,
+                    OrderTime = DateTime.Now,
                     ProductID = order.ProductID // For demo use
                 };
 
@@ -45,6 +45,8 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Repositories
                 };
                 
                 await CapPublisher.PublishAsync(EventConstants.EVENT_NAME_CREATE_ORDER, orderMessage);
+
+                Console.WriteLine("发送MQ成功！");
 
                 trans.Commit();
             }
@@ -62,10 +64,11 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Repositories
             using (var conn = new SqlConnection(ConnStr))
             {
                 conn.Open();
+
                 using (var trans = conn.BeginTransaction())
                 {
                     // business code here
-                    string sqlCommand = @"INSERT INTO [dbo].[Orders](ID, OrderTime, OrderUserID, ProductID)
+                    string sqlCommand = @"INSERT INTO [dbo].[Order](ID, OrderTime, OrderUserID, ProductID)
                                                                 VALUES(@ID, @OrderTime, @OrderUserID, @ProductID)";
 
                     order.ID = GenerateOrderID();
@@ -89,6 +92,8 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Repositories
                     };
 
                     await CapPublisher.PublishAsync(EventConstants.EVENT_NAME_CREATE_ORDER, orderMessage, trans);
+
+                    //throw new Exception("异常了");
 
                     trans.Commit();
                 }

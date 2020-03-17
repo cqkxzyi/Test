@@ -52,7 +52,7 @@ namespace Manulife.DNC.MSAD.WS.DeliveryService
                     cfg.ExchangeName = Configuration["MQ:ExchangeName"];
                 }); // RabbitMQ
 
-                x.UseDashboard(); // 启动仪表盘
+                //x.UseDashboard(); // 启动仪表盘
 
                 // Below settings is just for demo
                 x.FailedRetryCount = 1;
@@ -91,7 +91,7 @@ namespace Manulife.DNC.MSAD.WS.DeliveryService
             app.UseMvc();
 
             // CAP
-            app.UseCap();
+            //app.UseCap();
 
             // Swagger
             app.UseSwagger(c =>

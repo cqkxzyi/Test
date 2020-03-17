@@ -11,7 +11,7 @@ namespace Manulife.DNC.MSAD.WS.StorageService.Services
     public class OrderSubscriberService : IOrderSubscriberService, ICapSubscribe
     {
         private readonly string _connStr;
-        
+
         public OrderSubscriberService(string connStr)
         {
             _connStr = connStr;

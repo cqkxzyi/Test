@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Push</name>
+    </assembly>
+    <members>
+        <member name="M:Push.Controllers.OrderController.PostBySql(Push.Models.OrderDTO)">
+            <summary>
+            这是一个PostBySql函数
+            </summary>
+            <remarks>
+            例子:Get api/Test/Test3/zhangyi
+            </remarks>
+            <param name="orderDTO">请求实体</param>
+            <returns>是否成功</returns> 
+            <response code="200">成功啦 哈哈</response>
+            <response code="201">201错误</response>
+            <response code="400">400错误</response>
+        </member>
+        <member name="P:Push.Models.OrderDbContext.Orders">
+            <summary>
+            数据表注册
+            </summary>
+        </member>
+        <member name="M:Push.Repositories.OrderRepository.CreateOrderByDapper(Manulife.DNC.MSAD.WS.Events.IOrder)">
+            <summary>
+            创建订单
+            </summary>
+            <param name="order"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

@@ -1,17 +1,16 @@
-Ôªøusing Manulife.DNC.MSAD.WS.OrderService.Models;
-using Manulife.DNC.MSAD.WS.OrderService.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.PlatformAbstractions;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
+using Push.Models;
+using Push.Repositories;
 using System;
 using System.IO;
-using System.Reflection;
-using DotNetCore.CAP;
 
-namespace Manulife.DNC.MSAD.WS.OrderService
+namespace Push
 {
     public class Startup
     {
@@ -22,10 +21,10 @@ namespace Manulife.DNC.MSAD.WS.OrderService
 
         public IConfiguration Configuration { get; }
 
-
+        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddControllers();
 
             // Repository
             services.AddScoped<IOrderRepository, OrderRepository>();
@@ -40,9 +39,9 @@ namespace Manulife.DNC.MSAD.WS.OrderService
             // CAP
             services.AddCap(x =>
             {
-                //x.UseSqlServer(Configuration["DB:OrderDB"]); // SQL Server Âè™ËÉΩ‰∫åÈÄâ‰∏Ä
+                //x.UseSqlServer(Configuration["DB:OrderDB"]); // SQL Server ÷ªƒ‹∂˛—°“ª
 
-                x.UseEntityFramework<OrderDbContext>(); // EF  Âè™ËÉΩ‰∫åÈÄâ‰∏Ä
+                x.UseEntityFramework<OrderDbContext>(); // EF  ÷ªƒ‹∂˛—°“ª
 
 
                 x.UseRabbitMQ(cfg =>
@@ -55,28 +54,22 @@ namespace Manulife.DNC.MSAD.WS.OrderService
                     cfg.ExchangeName = Configuration["MQ:ExchangeName"];
                 }); // RabbitMQ
 
-                //x.UseDashboard(); // ÂêØÂä®‰ª™Ë°®Áõò
+                //x.UseDashboard(); // ∆Ù∂Ø“«±Ì≈Ã
 
                 x.FailedRetryCount = 2;
                 x.FailedRetryInterval = 5;
-                //x.SucceedMessageExpiredAfter = 60*2;//2ÂàÜÈíü
+                //x.SucceedMessageExpiredAfter = 60*2;//2∑÷÷”
             });
 
-            //Ê≥®ÂÜåSwaggerÁîüÊàêÂô®ÔºåÂÆö‰πâ‰∏Ä‰∏™ÂíåÂ§ö‰∏™Swagger ÊñáÊ°£
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc(Configuration["Service:DocName"], new Info { Title = "My API", Version = "v1" });
-            //    c.DescribeAllEnumsAsStrings();
-            //});
 
             services.AddSwaggerGen(s =>
             {
-                s.SwaggerDoc(Configuration["Service:DocName"], new Info
+                s.SwaggerDoc(Configuration["Service:DocName"], new OpenApiInfo
                 {
                     Title = Configuration["Service:Title"],
                     Version = Configuration["Service:Version"],
                     Description = Configuration["Service:Description"],
-                    Contact = new Contact
+                    Contact = new OpenApiContact
                     {
                         Name = Configuration["Service:Contact:Name"],
                         Email = Configuration["Service:Contact:Email"]
@@ -89,36 +82,44 @@ namespace Manulife.DNC.MSAD.WS.OrderService
                 //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 s.IncludeXmlComments(xmlPath);
             });
+
+
         }
 
-
-
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
 
             // CAP
             //app.UseCap();
 
-            //ÂêØÁî®‰∏≠Èó¥‰ª∂ÊúçÂä°ÁîüÊàêSwagger‰Ωú‰∏∫JSONÁªàÁªìÁÇπ
+            //∆Ù”√÷–º‰º˛∑˛ŒÒ…˙≥…Swagger◊˜Œ™JSON÷’Ω·µ„
             app.UseSwagger(c =>
             {
                 c.RouteTemplate = "doc/{documentName}/swagger.json";
             });
-            
-            //ÂêØÁî®‰∏≠Èó¥‰ª∂ÊúçÂä°ÂØπswagger-uiÔºåÊåáÂÆöSwagger JSONÁªàÁªìÁÇπ
+
+            //∆Ù”√÷–º‰º˛∑˛ŒÒ∂‘swagger-ui£¨÷∏∂®Swagger JSON÷’Ω·µ„
             app.UseSwaggerUI(s =>
             {
                 s.SwaggerEndpoint($"/doc/{Configuration["Service:DocName"]}/swagger.json",
-                    $"{Configuration["Service:Name"]} ÁâàÊú¨Ôºö{Configuration["Service:Version"]}");
-                s.RoutePrefix = string.Empty;//Ê†πÁõÆÂΩïÂ§Ñ‰ΩøÁî®
+                    $"{Configuration["Service:Name"]} ∞Ê±æ£∫{Configuration["Service:Version"]}");
+                s.RoutePrefix = string.Empty;//∏˘ƒø¬º¥¶ π”√
             });
-
         }
     }
 }

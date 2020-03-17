@@ -1,12 +1,12 @@
 ﻿using Dapper;
 using DotNetCore.CAP;
 using Manulife.DNC.MSAD.WS.Events;
-using Manulife.DNC.MSAD.WS.OrderService.Models;
+using Push.Models;
 using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
-namespace Manulife.DNC.MSAD.WS.OrderService.Repositories
+namespace Push.Repositories
 {
     public class OrderRepository : IOrderRepository
     {

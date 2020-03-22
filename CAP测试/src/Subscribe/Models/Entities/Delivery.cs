@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Subscribe.Models
+namespace Delivery.Models
 {
     [Table("Deliveries")]
     public class Delivery : IDelivery

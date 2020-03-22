@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Subscribe.Models
+namespace Delivery.Models
 {
     public class DeliveryDbContext : DbContext
     {

@@ -6,19 +6,19 @@ using Microsoft.Data.SqlClient;
 using System;
 using System.Threading.Tasks;
 
-namespace Subscribe.Services
+namespace Delivery.Services
 {
-    public class OrderSubscriberService : ICapSubscribe,IOrderSubscriberService
+    public class DeliverySubscriberService : ICapSubscribe, IDeliverySubscriberService
     {
         private readonly string _connStr;
 
-        public OrderSubscriberService(string connStr)
+        public DeliverySubscriberService(string connStr)
         {
             _connStr = connStr;
         }
 
-        [CapSubscribe(EventConstants.EVENT_NAME_CREATE_ORDER, Group = "group1")]
-        public async Task ConsumeOrderMessage(OrderMessage message)
+        [CapSubscribe(EventConstants.EVENT_CreateOrder, Group = "group1")]
+        public async Task Receive(OrderMessage message)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace Subscribe.Services
         }
 
         //[CapSubscribe(EventConstants.EVENT_NAME_CREATE_ORDER , Group = "group2")]
-        //public async Task ConsumeOrderMessage2(OrderMessage message)
+        //public async Task Send2(OrderMessage message)
         //{
         //    try
         //    {
@@ -48,7 +48,7 @@ namespace Subscribe.Services
         //}
 
         //[CapSubscribe(EventConstants.EVENT_NAME_CREATE_ORDER, Group = "group3")]
-        //public async Task ConsumeOrderMessage3(OrderMessage message)
+        //public async Task Send3(OrderMessage message)
         //{
         //    try
         //    {

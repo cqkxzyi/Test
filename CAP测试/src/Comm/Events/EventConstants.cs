@@ -6,6 +6,7 @@ namespace Comm
 {
     public class EventConstants
     {
-        public const string EVENT_NAME_CREATE_ORDER = "cap_order.create";
+        public const string EVENT_CreateOrder = "cap_order.create";
+        public const string EVENT_ByDelivery = "cap_delivery";
     }
 }

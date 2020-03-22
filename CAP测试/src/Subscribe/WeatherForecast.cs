@@ -1,6 +1,6 @@
 using System;
 
-namespace Subscribe
+namespace Delivery
 {
     public class WeatherForecast
     {

@@ -19,9 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manulife.DNC.MSAD.WS.Events
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".net core 3.0", ".net core 3.0", "{3632A1A4-3A5F-49C8-962B-023F52EE886B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subscribe", "Subscribe\Subscribe.csproj", "{94251907-833A-4FC9-9DFA-52961B43C920}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Delivery", "Subscribe\Delivery.csproj", "{94251907-833A-4FC9-9DFA-52961B43C920}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Publish", "Publish\Publish.csproj", "{2FFE6ACE-B038-44D5-ACA1-54D8A66014F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order", "Publish\Order.csproj", "{2FFE6ACE-B038-44D5-ACA1-54D8A66014F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comm", "Comm\Comm.csproj", "{65778F7A-5F72-4F8A-B69C-826184291590}"
 EndProject

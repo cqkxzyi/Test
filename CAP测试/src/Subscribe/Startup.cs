@@ -1,5 +1,4 @@
 using Comm;
-using Subscribe.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,9 +7,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
-using Subscribe.Models;
+using Delivery.Models;
+using Push.Repositories;
+using Delivery.Services;
 
-namespace Subscribe
+namespace Delivery
 {
     public class Startup
     {
@@ -26,8 +27,11 @@ namespace Subscribe
         {
             services.AddControllers();
 
+            // send
+            services.AddScoped<IDeliveryRepository, DeliveryRepository>();
+
             // Subscriber
-            services.AddScoped<IOrderSubscriberService, OrderSubscriberService>();
+            services.AddScoped<IDeliverySubscriberService, DeliverySubscriberService>();
             //services.AddTransient<IOrderSubscriberService, OrderSubscriberService>();
 
             // Dapper-ConnString
@@ -57,7 +61,7 @@ namespace Subscribe
                     cfg.ExchangeName = Configuration["MQ:ExchangeName"];
                 }); // RabbitMQ
 
-                //x.UseDashboard(); // 启动仪表盘
+                x.UseDashboard(); // 启动仪表盘
                 x.Version = "Order-v1";
 
                 // Below settings is just for demo
@@ -66,35 +70,6 @@ namespace Subscribe
                 //x.SucceedMessageExpiredAfter = 60*2;//2分钟
             });
 
-            // CAP
-            services.AddCap(x =>
-            {
-                //x.UseEntityFramework<DeliveryDbContext>(); // EF
-
-                x.UseSqlServer(c =>
-                {
-                    c.ConnectionString = Configuration["DB:OrderDB"];
-                    //c.Schema = "cap_D";
-                });
-
-                x.UseRabbitMQ(cfg =>
-                {
-                    cfg.HostName = Configuration["MQ:Host"];
-                    cfg.VirtualHost = Configuration["MQ:VirtualHost"];
-                    cfg.Port = Convert.ToInt32(Configuration["MQ:Port"]);
-                    cfg.UserName = Configuration["MQ:UserName"];
-                    cfg.Password = Configuration["MQ:Password"];
-                    cfg.ExchangeName = Configuration["MQ:ExchangeName"];
-                }); // RabbitMQ
-
-                //x.UseDashboard(); // 启动仪表盘
-                x.Version = "D-v1";
-
-                // Below settings is just for demo
-                x.FailedRetryCount = 1;
-                x.FailedRetryInterval = 5;
-                //x.SucceedMessageExpiredAfter = 60*2;//2分钟
-            });
 
             // Swagger
             services.AddSwaggerGen(s =>
@@ -135,7 +110,13 @@ namespace Subscribe
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                //RESTful API方式
+                //endpoints.MapControllers();
+
+                //自定义模式
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "api/{controller=Home}/{action=Index}/{id?}");
             });
 
 

@@ -62,25 +62,21 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Repositories
         /// <returns></returns>
         public async Task<bool> CreateOrderByDapper(IOrder order)
         {
-            using (var conn = new SqlConnection(ConnStr))
+            using (var connection = new SqlConnection(ConnStr))
             {
-                conn.Open();
-                using (var trans = conn.BeginTransaction())
+                using (var trans = connection.BeginTransaction(CapPublisher, autoCommit: false))
                 {
-                    // business code here
                     string sqlCommand = @"INSERT INTO [dbo].[Order](ID, OrderTime, OrderUserID, ProductID)
                                                                 VALUES(@ID, @OrderTime, @OrderUserID, @ProductID)";
 
-                    order.ID = GenerateOrderID();
-                    await conn.ExecuteAsync(sqlCommand, param: new
+                    await connection.ExecuteAsync(sqlCommand, param: new
                     {
                         ID = order.ID,
                         OrderTime = DateTime.Now,
                         OrderUserID = order.OrderUserID,
                         ProductID = order.ProductID
-                    }, transaction: trans);
+                    }, trans);
 
-                    // For Dapper/ADO.NET, need to pass transaction
                     var orderMessage = new OrderMessage()
                     {
                         ID = order.ID,
@@ -91,7 +87,6 @@ namespace Manulife.DNC.MSAD.WS.OrderService.Repositories
                         ProductID = order.ProductID // For demo use
                     };
 
-                    // await CapPublisher.PublishAsync(EventConstants.EVENT_NAME_CREATE_ORDER, orderMessage, trans);
                     await CapPublisher.PublishAsync(EventConstants.EVENT_NAME_CREATE_ORDER, orderMessage);
 
                     //throw new Exception("异常了");

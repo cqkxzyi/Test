@@ -1,16 +1,16 @@
+using Comm;
+using Subscribe.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.OpenApi.Models;
-using Push.Models;
-using Push.Repositories;
 using System;
 using System.IO;
+using Subscribe.Models;
 
-namespace Push
+namespace Subscribe
 {
     public class Startup
     {
@@ -26,23 +26,26 @@ namespace Push
         {
             services.AddControllers();
 
-            // Repository
-            services.AddScoped<IOrderRepository, OrderRepository>();
-
-            // EF DbContext
-            services.AddDbContext<OrderDbContext>();
+            // Subscriber
+            services.AddScoped<IOrderSubscriberService, OrderSubscriberService>();
+            //services.AddTransient<IOrderSubscriberService, OrderSubscriberService>();
 
             // Dapper-ConnString
             services.AddSingleton(Configuration["DB:OrderDB"]);
 
+            // EF DbContext
+            services.AddDbContext<DeliveryDbContext>();
 
             // CAP
             services.AddCap(x =>
             {
-                //x.UseSqlServer(Configuration["DB:OrderDB"]); // SQL Server 只能二选一
+                //x.UseEntityFramework<DeliveryDbContext>(); // EF
 
-                x.UseEntityFramework<OrderDbContext>(); // EF  只能二选一
-
+                x.UseSqlServer(c =>
+                {
+                    c.ConnectionString = Configuration["DB:OrderDB"];
+                    //c.Schema = "cap_D";
+                });
 
                 x.UseRabbitMQ(cfg =>
                 {
@@ -55,13 +58,45 @@ namespace Push
                 }); // RabbitMQ
 
                 //x.UseDashboard(); // 启动仪表盘
+                x.Version = "Order-v1";
 
-                x.FailedRetryCount = 2;
+                // Below settings is just for demo
+                x.FailedRetryCount = 1;
                 x.FailedRetryInterval = 5;
                 //x.SucceedMessageExpiredAfter = 60*2;//2分钟
             });
 
+            // CAP
+            services.AddCap(x =>
+            {
+                //x.UseEntityFramework<DeliveryDbContext>(); // EF
 
+                x.UseSqlServer(c =>
+                {
+                    c.ConnectionString = Configuration["DB:OrderDB"];
+                    //c.Schema = "cap_D";
+                });
+
+                x.UseRabbitMQ(cfg =>
+                {
+                    cfg.HostName = Configuration["MQ:Host"];
+                    cfg.VirtualHost = Configuration["MQ:VirtualHost"];
+                    cfg.Port = Convert.ToInt32(Configuration["MQ:Port"]);
+                    cfg.UserName = Configuration["MQ:UserName"];
+                    cfg.Password = Configuration["MQ:Password"];
+                    cfg.ExchangeName = Configuration["MQ:ExchangeName"];
+                }); // RabbitMQ
+
+                //x.UseDashboard(); // 启动仪表盘
+                x.Version = "D-v1";
+
+                // Below settings is just for demo
+                x.FailedRetryCount = 1;
+                x.FailedRetryInterval = 5;
+                //x.SucceedMessageExpiredAfter = 60*2;//2分钟
+            });
+
+            // Swagger
             services.AddSwaggerGen(s =>
             {
                 s.SwaggerDoc(Configuration["Service:DocName"], new OpenApiInfo
@@ -76,14 +111,11 @@ namespace Push
                     }
                 });
 
-                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                //var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                string basePath = AppDomain.CurrentDomain.BaseDirectory;
                 var xmlPath = Path.Combine(basePath, Configuration["Service:XmlFile"]);
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 s.IncludeXmlComments(xmlPath);
             });
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,9 +126,12 @@ namespace Push
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseHttpsRedirection();
+
             app.UseRouting();
 
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
@@ -104,20 +139,19 @@ namespace Push
             });
 
 
+
             // CAP
             //app.UseCap();
 
-            //启用中间件服务生成Swagger作为JSON终结点
+            // Swagger
             app.UseSwagger(c =>
             {
                 c.RouteTemplate = "doc/{documentName}/swagger.json";
             });
-
-            //启用中间件服务对swagger-ui，指定Swagger JSON终结点
             app.UseSwaggerUI(s =>
             {
                 s.SwaggerEndpoint($"/doc/{Configuration["Service:DocName"]}/swagger.json",
-                    $"{Configuration["Service:Name"]} 版本：{Configuration["Service:Version"]}");
+                    $"{Configuration["Service:Name"]} {Configuration["Service:Version"]}");
                 s.RoutePrefix = string.Empty;//根目录处使用
             });
         }

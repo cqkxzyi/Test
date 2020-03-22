@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using DotNetCore.CAP;
+using Manulife.DNC.MSAD.WS.Events;
 
 namespace Manulife.DNC.MSAD.WS.OrderService
 {
@@ -30,20 +31,23 @@ namespace Manulife.DNC.MSAD.WS.OrderService
             // Repository
             services.AddScoped<IOrderRepository, OrderRepository>();
 
-            // EF DbContext
-            services.AddDbContext<OrderDbContext>();
-
             // Dapper-ConnString
             services.AddSingleton(Configuration["DB:OrderDB"]);
 
+            // EF DbContext
+            services.AddDbContext<OrderDbContext>();
 
             // CAP
             services.AddCap(x =>
             {
-                //x.UseSqlServer(Configuration["DB:OrderDB"]); // SQL Server 只能二选一
+                //x.UseEntityFramework<OrderDbContext>(); // EF  只能二选一
 
-                x.UseEntityFramework<OrderDbContext>(); // EF  只能二选一
-
+                x.UseSqlServer(Configuration["DB:OrderDB"]); // SQL Server 只能二选一
+                x.UseSqlServer(c =>
+                {
+                    c.ConnectionString = Configuration["DB:OrderDB"];
+                    //c.Schema = "cap_Order";
+                });
 
                 x.UseRabbitMQ(cfg =>
                 {
@@ -56,10 +60,11 @@ namespace Manulife.DNC.MSAD.WS.OrderService
                 }); // RabbitMQ
 
                 //x.UseDashboard(); // 启动仪表盘
+                x.Version= "Order-v1";
 
-                x.FailedRetryCount = 2;
+                x.FailedRetryCount = 2;//设置失败重试次数
                 x.FailedRetryInterval = 5;
-                //x.SucceedMessageExpiredAfter = 60*2;//2分钟
+                //x.SucceedMessageExpiredAfter = 60*2;//2分钟 //设置处理成功的数据在数据库中保存的时间（秒），为保证系统新能，数据会定期清理。
             });
 
             //注册Swagger生成器，定义一个和多个Swagger 文档

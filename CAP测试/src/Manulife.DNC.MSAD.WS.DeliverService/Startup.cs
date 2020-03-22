@@ -1,4 +1,5 @@
-﻿using Manulife.DNC.MSAD.WS.DeliveryService.Models;
+﻿using DotNetCore.CAP;
+using Manulife.DNC.MSAD.WS.DeliveryService.Models;
 using Manulife.DNC.MSAD.WS.DeliveryService.Services;
 using Manulife.DNC.MSAD.WS.Events;
 using Microsoft.AspNetCore.Builder;
@@ -26,21 +27,26 @@ namespace Manulife.DNC.MSAD.WS.DeliveryService
         {
             services.AddMvc();
 
-            // EF DbContext
-            services.AddDbContext<DeliveryDbContext>();
+            // Subscriber
+            services.AddScoped<IOrderSubscriberService, OrderSubscriberService>();
+            //services.AddTransient<IOrderSubscriberService, OrderSubscriberService>();
 
             // Dapper-ConnString
-            services.AddSingleton(Configuration["DB:DeliveryDB"]);
+            services.AddSingleton(Configuration["DB:OrderDB"]);
 
-            // Subscriber
-            services.AddTransient<IOrderSubscriberService, OrderSubscriberService>();
+            // EF DbContext
+            services.AddDbContext<DeliveryDbContext>();
 
             // CAP
             services.AddCap(x =>
             {
-                x.UseEntityFramework<DeliveryDbContext>(); // EF
+                //x.UseEntityFramework<DeliveryDbContext>(); // EF
 
-                x.UseSqlServer(Configuration["DB:DeliveryDB"]); // SQL Server
+                x.UseSqlServer(c =>
+                {
+                    c.ConnectionString = Configuration["DB:OrderDB"];
+                    //c.Schema = "cap_D";
+                });
 
                 x.UseRabbitMQ(cfg =>
                 {
@@ -53,10 +59,42 @@ namespace Manulife.DNC.MSAD.WS.DeliveryService
                 }); // RabbitMQ
 
                 //x.UseDashboard(); // 启动仪表盘
+                x.Version = "Order-v1";
 
                 // Below settings is just for demo
                 x.FailedRetryCount = 1;
                 x.FailedRetryInterval = 5;
+                //x.SucceedMessageExpiredAfter = 60*2;//2分钟
+            });
+
+            // CAP
+            services.AddCap(x =>
+            {
+                //x.UseEntityFramework<DeliveryDbContext>(); // EF
+
+                x.UseSqlServer(c =>
+                {
+                    c.ConnectionString = Configuration["DB:OrderDB"];
+                    //c.Schema = "cap_D";
+                });
+
+                x.UseRabbitMQ(cfg =>
+                {
+                    cfg.HostName = Configuration["MQ:Host"];
+                    cfg.VirtualHost = Configuration["MQ:VirtualHost"];
+                    cfg.Port = Convert.ToInt32(Configuration["MQ:Port"]);
+                    cfg.UserName = Configuration["MQ:UserName"];
+                    cfg.Password = Configuration["MQ:Password"];
+                    cfg.ExchangeName = Configuration["MQ:ExchangeName"];
+                }); // RabbitMQ
+
+                //x.UseDashboard(); // 启动仪表盘
+                x.Version = "D-v1";
+
+                // Below settings is just for demo
+                x.FailedRetryCount = 1;
+                x.FailedRetryInterval = 5;
+                //x.SucceedMessageExpiredAfter = 60*2;//2分钟
             });
 
             // Swagger

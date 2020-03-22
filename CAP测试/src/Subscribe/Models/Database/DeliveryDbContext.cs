@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Push.Models
+namespace Subscribe.Models
 {
-    public class OrderDbContext : DbContext
+    public class DeliveryDbContext : DbContext
     {
         public string ConnStr { get; }
 
-        public OrderDbContext(DbContextOptions options, string connStr) : base(options)
+        public DeliveryDbContext(DbContextOptions options, string connStr) : base(options)
         {
             ConnStr = connStr;
         }
@@ -16,9 +16,6 @@ namespace Push.Models
             optionsBuilder.UseSqlServer(ConnStr);
         }
 
-        /// <summary>
-        /// 数据表注册
-        /// </summary>
-        public DbSet<Orders> Orders { get; set; }
+        public DbSet<Delivery> Deliveries { get; set; }
     }
 }

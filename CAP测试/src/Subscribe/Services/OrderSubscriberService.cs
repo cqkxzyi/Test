@@ -1,13 +1,12 @@
-﻿using Dapper;
+﻿using Comm;
+using Common;
+using Dapper;
 using DotNetCore.CAP;
-using Exceptionless.Json;
-using Manulife.DNC.MSAD.Common;
-using Manulife.DNC.MSAD.WS.Events;
+using Microsoft.Data.SqlClient;
 using System;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 
-namespace Manulife.DNC.MSAD.WS.DeliveryService.Services
+namespace Subscribe.Services
 {
     public class OrderSubscriberService : ICapSubscribe,IOrderSubscriberService
     {

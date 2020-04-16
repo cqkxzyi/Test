@@ -17,14 +17,28 @@ namespace Delivery.Services
             _connStr = connStr;
         }
 
+        //[CapSubscribe(EventConstants.EVENT_CreateOrder, Group = "group1")]
+        //public async Task Receive(OrderMessage message)
+        //{
+        //    try
+        //    {
+        //        await Console.Out.WriteLineAsync($"[DeliveryService] 接收到消息 : {JsonHelper.SerializeObject(message)}");
+
+        //        await AddDeliveryRecordAsync(message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
+
         [CapSubscribe(EventConstants.EVENT_CreateOrder, Group = "group1")]
-        public async Task Receive(OrderMessage message)
+        public async Task Receive(string message)
         {
             try
             {
-                await Console.Out.WriteLineAsync($"[DeliveryService] 接收到消息 : {JsonHelper.SerializeObject(message)}");
+                await Console.Out.WriteLineAsync($"[DeliveryService] 接收到消息 : {message}");
 
-                await AddDeliveryRecordAsync(message);
             }
             catch (Exception ex)
             {

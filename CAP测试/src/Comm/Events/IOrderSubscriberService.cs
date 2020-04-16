@@ -9,7 +9,10 @@ namespace Comm
     }
     public interface IDeliverySubscriberService
     {
-        Task Receive(OrderMessage message);
+        Task Receive(string message);
+
+        //Task Receive(OrderMessage message);
+
         //void ConsumeOrderMessage1(OrderMessage message);
     }
 }

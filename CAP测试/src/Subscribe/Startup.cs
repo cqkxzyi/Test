@@ -25,14 +25,14 @@ namespace Delivery
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
 
-            // send
-            services.AddScoped<IDeliveryRepository, DeliveryRepository>();
-
-            // Subscriber
+            //注册接收
             services.AddScoped<IDeliverySubscriberService, DeliverySubscriberService>();
             //services.AddTransient<IOrderSubscriberService, OrderSubscriberService>();
+
+            //注册发送
+            services.AddScoped<IDeliveryRepository, DeliveryRepository>();
 
             // Dapper-ConnString
             services.AddSingleton(Configuration["DB:OrderDB"]);
@@ -48,7 +48,7 @@ namespace Delivery
                 x.UseSqlServer(c =>
                 {
                     c.ConnectionString = Configuration["DB:OrderDB"];
-                    //c.Schema = "cap_D";
+                    c.Schema = "cap_D";
                 });
 
                 x.UseRabbitMQ(cfg =>
@@ -62,13 +62,15 @@ namespace Delivery
                 }); // RabbitMQ
 
                 x.UseDashboard(); // 启动仪表盘
-                x.Version = "Order-v1";
+                //x.Version = "Order-v1";
 
                 // Below settings is just for demo
                 x.FailedRetryCount = 1;
                 x.FailedRetryInterval = 5;
                 //x.SucceedMessageExpiredAfter = 60*2;//2分钟
             });
+
+
 
 
             // Swagger

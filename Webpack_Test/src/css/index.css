@@ -1,0 +1,6 @@
+/* @import './a.css'; */
+
+body{
+    background-color: rgb(86, 77, 170);
+    transform: rotate(40deg);
+}

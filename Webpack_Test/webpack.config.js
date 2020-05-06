@@ -64,10 +64,13 @@ module.exports = {
                             '@babel/preset-env'
                         ],
                         plugins:[
-                            '@babel/plugin-proposal-class-properties'
+                            '@babel/plugin-proposal-class-properties',
+                            '@babel/plugin-transform-runtime'
                         ]
                     }
-                }
+                },
+                include:/src/,
+                exclude: /node_modules/  //js排除范围
               }
         ]
     }

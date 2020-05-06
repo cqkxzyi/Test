@@ -64,13 +64,23 @@ module.exports = {
                             '@babel/preset-env'
                         ],
                         plugins:[
-                            '@babel/plugin-proposal-class-properties',
-                            '@babel/plugin-transform-runtime'
+                            '@babel/plugin-proposal-class-properties' //类class关键字解析
+                            ,'@babel/plugin-transform-runtime' //高级语法解析
                         ]
                     }
-                },
-                include:/src/,
-                exclude: /node_modules/  //js排除范围
+                }
+                ,include:path.resolve(__dirname, "src") //js处理范围
+                ,exclude: /node_modules/  //js排除范围
+              }
+              ,{
+                  test:/\.js$/ //效验js
+                  ,use:{
+                    loader:"eslint-loader" 
+                    ,options:{
+                        enforce:'pre' //强制之前执行previous   之后是post
+                    }
+                  }
+                  ,exclude: /node_modules/  //js排除范围
               }
         ]
     }

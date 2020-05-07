@@ -2,6 +2,7 @@
 let path = require('path');
 let HtmlWebpackPlugin = require("html-webpack-plugin");//文件copy
 let MiniCssExtractPlugin=require("mini-css-extract-plugin");//css生成单独文件
+let Webpack=require("webpack");//引入webpack
 
 module.exports = {
     mode: "development",//production
@@ -11,8 +12,13 @@ module.exports = {
         path: path.resolve(__dirname, "build")//必须是绝对路径
         //,publicPath: './build' 用法未知
     },
-    plugins: [//文件输出配置
-        new HtmlWebpackPlugin({
+    devServer: { //开发服务器配置
+        port: 3001,
+        progress: true//进度展示
+        ,contentBase: "./build" //path.join(__dirname, "dist")
+    },
+    plugins: [ //插件配置区域
+        new HtmlWebpackPlugin({  //文件输出配置
             template: "./src/html/index.html",
             filename: "index.html"
             // ,minify: {
@@ -23,14 +29,16 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename:"main.css"
         })
-
-    ],
-    devServer: { //开发服务器配置
-        port: 3001,
-        progress: true//进度展示
-        ,contentBase: "./build" //path.join(__dirname, "dist")
-    },
-    module: {//模块配置
+        ,new Webpack.ProvidePlugin({//在每个模块中注入jquery
+            $: 'jquery',
+            jQuery: 'jquery'
+        })
+    ]
+    // ,externals:{//忽略模块配置，不打包Build   需要页面自行引用js
+    //     jquery: 'jquery',
+    //     $:'jquery'
+    //   }
+    ,module: {//模块配置
         //规则 css-loader 解析@import语法
         //style-loader 作用是：把css插入到head标签
         //loader特点： 功能单一、默认从右向左、从下至上执行
@@ -84,4 +92,5 @@ module.exports = {
               }
         ]
     }
+
 };

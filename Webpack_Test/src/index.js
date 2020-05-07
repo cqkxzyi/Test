@@ -1,6 +1,6 @@
 
 console.info("你好啊，1");
-let str=require("./a.js");
+let a_model=require("./a.js");
 console.info("你好啊，2");
 
 require("./css/index.css");
@@ -20,3 +20,5 @@ class A{
 }
 let a=new A(10);
 console.log(a.a);
+
+a_model.TestJquery()

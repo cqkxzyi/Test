@@ -43,7 +43,24 @@ module.exports = {
         //style-loader 作用是：把css插入到head标签
         //loader特点： 功能单一、默认从右向左、从下至上执行
         rules: [
+            // {
+            //     test:/\.(png|jpg|jpeg|gif)/,//图片处理
+            //     use:"file-loader"
+            // }
             {
+                test:/\.(png|jpg|jpeg|gif)/,//图片处理（方式2）当图片比较小的时候，使用base64进行转换
+                use:{
+                    loader:"url-loader",
+                    options:{
+                        limit:1*1024
+                    }
+                }
+            }
+            ,{
+                test:/\.html/,//HTML处理
+                use:"html-withimg-loader"
+            }
+            ,{
                 test: /\.css$/,
                 use: [//可以是字符串、对象。区别是：对象可以设置更多配置
                     // {

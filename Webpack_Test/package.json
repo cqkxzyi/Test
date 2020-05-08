@@ -5,10 +5,11 @@
     "dev": "npx webpack-dev-server"
   },
   "dependencies": {
-    "jquery": "^3.5.1",
     "@babel/runtime": "^7.9.6",
     "eslint": "^6.8.0",
-    "eslint-loader": "^4.0.2"
+    "eslint-loader": "^4.0.2",
+    "jquery": "^3.5.1",
+    "url-loader": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
@@ -22,6 +23,7 @@
     "expose-loader": "^0.7.5",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
+    "html-withimg-loader": "^0.1.16",
     "less": "^3.11.1",
     "less-loader": "^6.0.0",
     "mini-css-extract-plugin": "^0.9.0",

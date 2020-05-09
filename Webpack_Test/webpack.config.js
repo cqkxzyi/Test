@@ -34,16 +34,33 @@ module.exports = {
             jQuery: 'jquery'
         })
     ]
-    ,externals:{//忽略模块配置，全局中已经配置了，无需重复引用。
-        jquery: 'jquery',
-        $:'jquery'
-      }
+    // ,externals:{//忽略模块配置，不打包Build   需要页面自行引用js
+    //     jquery: 'jquery',
+    //     $:'jquery'
+    //   }
     ,module: {//模块配置
         //规则 css-loader 解析@import语法
         //style-loader 作用是：把css插入到head标签
         //loader特点： 功能单一、默认从右向左、从下至上执行
         rules: [
+            // {
+            //     test:/\.(png|jpg|jpeg|gif)/,//图片处理
+            //     use:"file-loader"
+            // }
             {
+                test:/\.(png|jpg|jpeg|gif)/,//图片处理（方式2）当图片比较小的时候，使用base64进行转换
+                use:{
+                    loader:"url-loader",
+                    options:{
+                        limit:1*1024
+                    }
+                }
+            }
+            ,{
+                test:/\.html/,//HTML处理
+                use:"html-withimg-loader"
+            }
+            ,{
                 test: /\.css$/,
                 use: [//可以是字符串、对象。区别是：对象可以设置更多配置
                     // {
@@ -65,7 +82,7 @@ module.exports = {
             }
             ,{
                 test: /\.js$/
-                ,include:/src/  //js打包范围
+                 ,include:path.resolve(__dirname, "src") //js处理范围
                 ,exclude: /node_modules/  //js排除范围
                 ,use:{
                     loader: "babel-loader"
@@ -74,11 +91,20 @@ module.exports = {
                             '@babel/preset-env'
                         ],
                         plugins:[
-                            '@babel/plugin-proposal-class-properties',
-                            '@babel/plugin-transform-runtime'
+                            '@babel/plugin-proposal-class-properties' //类class关键字解析
+                            ,'@babel/plugin-transform-runtime' //高级语法解析
                         ]
                     }
-                }
+              }
+              ,{
+                  test:/\.js$/ //效验js
+                  ,use:{
+                    loader:"eslint-loader" 
+                    ,options:{
+                        enforce:'pre' //强制之前执行previous   之后是post
+                    }
+                  }
+                  ,exclude: /node_modules/  //js排除范围
               }
         ]
     }

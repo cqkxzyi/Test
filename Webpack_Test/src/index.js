@@ -21,4 +21,10 @@ class A{
 let a=new A(10);
 console.log(a.a);
 
-a_model.TestJquery()
+a_model.TestJquery();
+
+//图片加载
+import img2020 from './images/2020.jpg'//把图片引入，返回的是新图片地址
+let image=new Image();
+image.src=img2020;
+document.body.appendChild(image);

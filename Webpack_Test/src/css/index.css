@@ -2,5 +2,17 @@
 
 body{
     background-color: rgb(86, 77, 170);
-    transform: rotate(40deg);
+    transform: rotate(1deg);
 }
+
+h2{
+    transform: rotate(10deg);
+}
+
+.class1{
+    width: 100px;
+    height: 300px;
+    background :url("../images/2.jpg");
+}
+
+

@@ -64,8 +64,10 @@ module.exports = {
                     , 'less-loader']
             }
             ,{
-                test: /\.js$/,
-                use:{
+                test: /\.js$/
+                ,include:/src/  //js打包范围
+                ,exclude: /node_modules/  //js排除范围
+                ,use:{
                     loader: "babel-loader"
                     ,options:{
                         presets:[
@@ -76,9 +78,7 @@ module.exports = {
                             '@babel/plugin-transform-runtime'
                         ]
                     }
-                },
-                include:/src/,
-                exclude: /node_modules/  //js排除范围
+                }
               }
         ]
     }

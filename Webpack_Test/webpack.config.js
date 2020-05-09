@@ -1,8 +1,9 @@
 //webpack 是node写出来的
 let path = require('path');
+let Webpack=require("webpack");//引入webpack
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");//清理文件
 let HtmlWebpackPlugin = require("html-webpack-plugin");//文件copy
 let MiniCssExtractPlugin=require("mini-css-extract-plugin");//css生成单独文件
-let Webpack=require("webpack");//引入webpack
 
 module.exports = {
     mode: "development",//production
@@ -18,7 +19,17 @@ module.exports = {
         ,contentBase: "./build" //path.join(__dirname, "dist")
     },
     plugins: [ //插件配置区域
-        new HtmlWebpackPlugin({  //文件输出配置
+        //new Webpack.ProgressPlugin(),//可有可无
+        new CleanWebpackPlugin(//清理文件
+            { 
+            dry: false
+            ,verbose:true
+            ,cleanOnceBeforeBuildPatterns:[
+                path.join(process.cwd(), 'build/**/*')
+                ,'！static-files * ']
+            ,exclude:['assets']
+          })//清楚
+        ,new HtmlWebpackPlugin({  //文件输出配置
             template: "./src/html/index.html",
             filename: "index.html"
             // ,minify: {
@@ -26,7 +37,7 @@ module.exports = {
             // }//压缩
             //, hash: true//生成随机hash
         }),
-        new MiniCssExtractPlugin({
+        new MiniCssExtractPlugin({//css单独生成文件
             filename:"main.css"
         })
         ,new Webpack.ProvidePlugin({//在每个模块中注入jquery
@@ -34,7 +45,7 @@ module.exports = {
             jQuery: 'jquery'
         })
     ]
-    // ,externals:{//忽略模块配置，不打包Build   需要页面自行引用js
+    // ,externals:{//忽略模块配置，不打包编译模块   需要页面自行引用js
     //     jquery: 'jquery',
     //     $:'jquery'
     //   }
@@ -82,7 +93,7 @@ module.exports = {
             }
             ,{
                 test: /\.js$/
-                 ,include:path.resolve(__dirname, "src") //js处理范围
+                ,include:path.resolve(__dirname, "src") //js处理范围
                 ,exclude: /node_modules/  //js排除范围
                 ,use:{
                     loader: "babel-loader"
@@ -96,16 +107,17 @@ module.exports = {
                         ]
                     }
               }
-              ,{
-                  test:/\.js$/ //效验js
-                  ,use:{
-                    loader:"eslint-loader" 
-                    ,options:{
-                        enforce:'pre' //强制之前执行previous   之后是post
-                    }
-                  }
-                  ,exclude: /node_modules/  //js排除范围
-              }
+            }
+            //   ,{
+            //       test:/\.js$/ //效验js
+            //       ,exclude: /node_modules/  //js排除范围
+            //       ,use:{
+            //         loader:"eslint-loader" 
+            //         ,options:{
+            //             enforce:'pre' //强制之前执行previous   之后是post
+            //         }
+            //       }
+            //   }
         ]
     }
 

@@ -3,6 +3,7 @@ let path = require('path');
 let Webpack=require("webpack");//引入webpack
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");//清理文件
 let HtmlWebpackPlugin = require("html-webpack-plugin");//文件copy
+const HtmlLoader= require("html-loader");
 let MiniCssExtractPlugin=require("mini-css-extract-plugin");//css生成单独文件
 
 module.exports = {
@@ -20,6 +21,7 @@ module.exports = {
     },
     plugins: [ //插件配置区域
         //new Webpack.ProgressPlugin(),//可有可无
+        HtmlLoader,
         new CleanWebpackPlugin(//清理文件
             { 
             dry: false
@@ -55,21 +57,38 @@ module.exports = {
         //loader特点： 功能单一、默认从右向左、从下至上执行
         rules: [
             // {
-            //     test:/\.(png|jpg|jpeg|gif)/,//图片处理
-            //     use:"file-loader"
+            //     test: /\.html/,//解析html中的图片资源(不能同时兼顾所有情况，暂时改用html-loader处理)
+            //     use: "html-withimg-loader"
             // }
             {
-                test:/\.(png|jpg|jpeg|gif)/,//图片处理（方式2）当图片比较小的时候，使用base64进行转换
-                use:{
-                    loader:"url-loader",
-                    options:{
-                        limit:1*1024
+                test: /\.(html)$/i,
+                use: {
+                  loader: 'html-loader'
+                //   ,options: {
+                //     attrs: [':data-src']
+                //   }
+                }
+            } 
+            ,{
+                test: /\.(png|gif)$/,//使用base64进行转换
+                use: {
+                    loader: "url-loader",
+                    options: {
+                        limit: 1 * 1024
                     }
                 }
             }
             ,{
-                test:/\.html/,//HTML处理
-                use:"html-withimg-loader"
+                test:/\.(jpg|jpeg)$/,//图片处理（方式1）
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            esModule: false
+                            //,outputPath: 'build'
+                        },
+                    },
+                ]
             }
             ,{
                 test: /\.css$/,

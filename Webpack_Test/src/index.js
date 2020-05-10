@@ -28,3 +28,5 @@ import img2020 from './images/2020.jpg'//把图片引入，返回的是新图片
 let image=new Image();
 image.src=img2020;
 document.body.appendChild(image);
+
+require('html-loader!./html/file.html')

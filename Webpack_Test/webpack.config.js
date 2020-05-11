@@ -10,7 +10,7 @@ module.exports = {
     mode: "development",//production
     entry: "./src/index.js",//入口
     output: {
-        filename: "index.js",//输出文件名 [hash:5]
+        filename: "index[hash:16].js",//输出文件名 [hash:5]
         path: path.resolve(__dirname, "build")//必须是绝对路径
         //,publicPath: './build' 用法未知
     },
@@ -25,7 +25,7 @@ module.exports = {
         new CleanWebpackPlugin(//清理文件
             { 
             dry: false
-            ,verbose:true
+            ,verbose:false
             ,cleanOnceBeforeBuildPatterns:[
                 path.join(process.cwd(), 'build/**/*')
                 ,'！static-files * ']
@@ -33,11 +33,11 @@ module.exports = {
           })//清楚
         ,new HtmlWebpackPlugin({  //文件输出配置
             template: "./src/html/index.html",
-            filename: "index.html"
+            filename: "index[hash:16].html"
             // ,minify: {
             //     removeAttributeQuotes:true
             // }//压缩
-            //, hash: true//生成随机hash
+            , hash: true//生成随机hash
         }),
         new MiniCssExtractPlugin({//css单独生成文件
             filename:"main.css"

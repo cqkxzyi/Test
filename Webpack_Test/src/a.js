@@ -3,7 +3,7 @@
 
 require("@babel/polyfill")
 
-console.info("a.js被引用了");
+console.info("加载a.js");
 
 console.log($);
 //测试expose-loader 暴露全局的loader
@@ -32,6 +32,17 @@ function TestJquery(){
 
 
 
+// //require/exports方式暴露
+// var app = {
+//     name: 'app',
+//     version: '1.0.0',
+//     sayName: function(name){
+//         console.log(this.name);
+//     }
+// }
+// module.exports = app;
+
+//import/export方式暴露
 export {
     B,
     gen,

@@ -8,11 +8,14 @@ let MiniCssExtractPlugin=require("mini-css-extract-plugin");//css生成单独文
 
 module.exports = {
     mode: "development",//production
-    entry: "./src/index.js",//入口
+    entry: {    //入口
+        index:"./src/index.js"
+        ,other:"./src/other.js"
+    },
     output: {
-        filename: "index[hash:16].js",//输出文件名 [hash:5]
+        filename: "[name][hash:6].js",//输出文件名 [hash:5]
         path: path.resolve(__dirname, "build")//必须是绝对路径
-        //,publicPath: './build' 用法未知
+        //,publicPath: 'http://www.image.com' 资源前缀
     },
     devServer: { //开发服务器配置
         port: 3001,
@@ -21,7 +24,7 @@ module.exports = {
     },
     plugins: [ //插件配置区域
         //new Webpack.ProgressPlugin(),//可有可无
-        HtmlLoader,
+        // HtmlLoader,
         new CleanWebpackPlugin(//清理文件
             { 
             dry: false
@@ -31,16 +34,17 @@ module.exports = {
                 ,'！static-files * ']
             ,exclude:['assets']
           })//清楚
-        ,new HtmlWebpackPlugin({  //文件输出配置
+        ,new HtmlWebpackPlugin({  //html文件输出配置
             template: "./src/html/index.html",
-            filename: "index[hash:16].html"
+            filename: "index.html",
+            chunks:["index","other"] //选择引用哪些js
             // ,minify: {
             //     removeAttributeQuotes:true
             // }//压缩
             , hash: true//生成随机hash
-        }),
-        new MiniCssExtractPlugin({//css单独生成文件
-            filename:"main.css"
+        })
+        ,new MiniCssExtractPlugin({//css单独生成文件
+            filename:"css/main.css"
         })
         ,new Webpack.ProvidePlugin({//在每个模块中注入jquery
             $: 'jquery',
@@ -64,9 +68,6 @@ module.exports = {
                 test: /\.(html)$/i,
                 use: {
                   loader: 'html-loader'
-                //   ,options: {
-                //     attrs: [':data-src']
-                //   }
                 }
             } 
             ,{
@@ -75,6 +76,8 @@ module.exports = {
                     loader: "url-loader",
                     options: {
                         limit: 1 * 1024
+                        ,outputPath:"images/"
+                        //,publicPath: 'http://www.image.com' 资源前缀
                     }
                 }
             }
@@ -85,7 +88,8 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             esModule: false
-                            //,outputPath: 'build'
+                            ,outputPath:"images/"
+                            //,publicPath: 'http://www.image.com' 资源前缀
                         },
                     },
                 ]

@@ -17,7 +17,6 @@ let func1=()=>{
 
 class A{
     a=300;
-
 }
 let a=new A(10);
 console.log(a.a);

@@ -1,0 +1,1 @@
+console.info("加载other完成!");

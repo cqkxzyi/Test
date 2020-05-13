@@ -1,1 +1,1 @@
-console.info("加载other完成!");
+console.info("加载other完成!哈哈哈");

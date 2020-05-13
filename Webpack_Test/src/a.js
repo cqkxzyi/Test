@@ -3,7 +3,7 @@
 
 require("@babel/polyfill")
 
-console.info("加载a.js");
+console.info("加载a.js11111111111111");
 
 console.log($);
 //测试expose-loader 暴露全局的loader

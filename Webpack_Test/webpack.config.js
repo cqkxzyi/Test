@@ -1,18 +1,26 @@
 //webpack 是node写出来的
 let path = require('path');
 let Webpack=require("webpack");//引入webpack
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");//清理文件
-let HtmlWebpackPlugin = require("html-webpack-plugin");//文件copy
+const { CleanWebpackPlugin }  = require("clean-webpack-plugin");//清理文件
+let HtmlWebpackPlugin = require("html-webpack-plugin");//文件输出
+let CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlLoader= require("html-loader");
 let MiniCssExtractPlugin=require("mini-css-extract-plugin");//css生成单独文件
 
 module.exports = {
     mode: "development",//production
+    devtool:'source-map',//源码文件
     entry: {    //入口
         index:"./src/index.js"
         ,other:"./src/other.js"
-    },
-    output: {
+    }
+    // ,watch:true//实时监控代码、打包
+    // ,watchOptions:{
+    //     poll:1000,
+    //     aggregateTimeout:2000,//防抖
+    //     ignored:/node_modules/
+    // }
+    ,output: {
         filename: "[name][hash:6].js",//输出文件名 [hash:5]
         path: path.resolve(__dirname, "build")//必须是绝对路径
         //,publicPath: 'http://www.image.com' 资源前缀
@@ -25,7 +33,7 @@ module.exports = {
     plugins: [ //插件配置区域
         //new Webpack.ProgressPlugin(),//可有可无
         // HtmlLoader,
-        new CleanWebpackPlugin(//清理文件
+        new CleanWebpackPlugin(//文件清理
             { 
             dry: false
             ,verbose:false
@@ -33,7 +41,14 @@ module.exports = {
                 path.join(process.cwd(), 'build/**/*')
                 ,'！static-files * ']
             ,exclude:['assets']
-          })//清楚
+          })
+          ,new CopyWebpackPlugin([//文件copy
+            {
+                from: "./src/doc"
+                ,to:"./doc"
+                ,ignore: ['*.txt']
+            }
+        ])
         ,new HtmlWebpackPlugin({  //html文件输出配置
             template: "./src/html/index.html",
             filename: "index.html",
@@ -41,7 +56,7 @@ module.exports = {
             // ,minify: {
             //     removeAttributeQuotes:true
             // }//压缩
-            , hash: true//生成随机hash
+            //, hash: true//生成随机hash
         })
         ,new MiniCssExtractPlugin({//css单独生成文件
             filename:"css/main.css"
@@ -50,6 +65,7 @@ module.exports = {
             $: 'jquery',
             jQuery: 'jquery'
         })
+        ,new Webpack.BannerPlugin("zhangyi 2020-05-13")
     ]
     // ,externals:{//忽略模块配置，不打包编译模块   需要页面自行引用js
     //     jquery: 'jquery',

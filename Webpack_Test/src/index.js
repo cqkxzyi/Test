@@ -32,3 +32,12 @@ image.src=img2020;
 document.body.appendChild(image);
 
 //require('html-loader!./html/file.html')
+
+//请求服务端
+let xhr=new XMLHttpRequest();
+xhr.open("get","/api/user",true);
+xhr.onload=function(res){
+    console.info(res);
+    console.log(xhr.response);
+}
+xhr.send();

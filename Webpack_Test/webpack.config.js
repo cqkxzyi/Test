@@ -24,11 +24,21 @@ module.exports = {
         filename: "[name][hash:6].js",//输出文件名 [hash:5]
         path: path.resolve(__dirname, "build")//必须是绝对路径
         //,publicPath: 'http://www.image.com' 资源前缀
-    },
-    devServer: { //开发服务器配置
-        port: 3001,
-        progress: true//进度展示
+    }
+    ,resolve:{//包解析
+        modules:[path.resolve("node_modules")]
+        ,extensions: [ '.tsx', '.ts', '.js','.html' ]//在导入语句没带文件后缀时的查找顺序
+      }
+    ,devServer: { //开发服务器配置
+        port: 3001
+        ,progress: true//进度展示
         ,contentBase: "./build" //path.join(__dirname, "dist")
+        ,proxy:{//配置代理
+            "/api":{
+                target:"http://localhost:3000"
+                ,pathRewrite:{"/api":"/app"}
+            }
+        }
     },
     plugins: [ //插件配置区域
         //new Webpack.ProgressPlugin(),//可有可无
@@ -72,21 +82,8 @@ module.exports = {
     //     $:'jquery'
     //   }
     ,module: {//模块配置
-        //规则 css-loader 解析@import语法
-        //style-loader 作用是：把css插入到head标签
-        //loader特点： 功能单一、默认从右向左、从下至上执行
-        rules: [
-            // {
-            //     test: /\.html/,//解析html中的图片资源(不能同时兼顾所有情况，暂时改用html-loader处理)
-            //     use: "html-withimg-loader"
-            // }
+        rules: [ 
             {
-                test: /\.(html)$/i,
-                use: {
-                  loader: 'html-loader'
-                }
-            } 
-            ,{
                 test: /\.(png|gif)$/,//使用base64进行转换
                 use: {
                     loader: "url-loader",
@@ -112,7 +109,7 @@ module.exports = {
             }
             ,{
                 test: /\.css$/,
-                use: [//可以是字符串、对象。区别是：对象可以设置更多配置
+                use: [
                     // {
                     //     loader: 'style-loader'
                     //     ,options: { insert: 'body' }
@@ -126,9 +123,19 @@ module.exports = {
                 test: /\.less$/,
                 use: [
                     'style-loader'
-                    , 'css-loader'
-                    , 'postcss-loader'
-                    , 'less-loader']
+                    ,'css-loader'
+                    ,'postcss-loader'
+                    ,'less-loader']
+            }
+            // {
+            //     test: /\.html/,//解析html中的图片资源(不能同时兼顾所有情况，暂时改用html-loader处理)
+            //     use: "html-withimg-loader"
+            // }
+            ,{
+                test: /\.(html)$/i,
+                use: {
+                  loader: 'html-loader'
+                }
             }
             ,{
                 test: /\.js$/
@@ -158,6 +165,6 @@ module.exports = {
             //       }
             //   }
         ]
-    }
+    }//module 配置完毕
 
 };

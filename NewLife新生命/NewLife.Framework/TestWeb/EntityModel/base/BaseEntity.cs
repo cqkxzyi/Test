@@ -288,6 +288,7 @@ namespace TestWeb
         public override Int32 Insert()
         {
             var result = base.Insert();
+            
             XTrace.WriteLine("我添加了数据哦！");
             LogProvider.Provider.WriteLog("添加", this);
             return result;

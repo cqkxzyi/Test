@@ -47,37 +47,42 @@ namespace TestWeb
         public override void Valid(Boolean isNew)
         {
             // 如果没有脏数据，则不需要进行任何处理
-            if (!HasDirty) return;
+            if (!HasDirty) 
+                return;
+
 
             // 在新插入数据或者修改了指定字段时进行修正
         }
 
 
 
-        ///// <summary>首次连接数据库时初始化数据，仅用于实体类重载，用户不应该调用该方法</summary>
-        //[EditorBrowsable(EditorBrowsableState.Never)]
-        //protected override void InitData()
-        //{
-        //    // InitData一般用于当数据表没有数据时添加一些默认数据，该实体类的任何第一次数据库操作都会触发该方法，默认异步调用
-        //    if (Meta.Session.Count > 0) return;
+        /// <summary>首次连接数据库时初始化数据，仅用于实体类重载，用户不应该调用该方法</summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        protected override void InitData()
+        {
+            // InitData一般用于当数据表没有数据时添加一些默认数据，该实体类的任何第一次数据库操作都会触发该方法，默认异步调用
+            if (Meta.Session.Count > 0) 
+                return;
 
-        //    if (XTrace.Debug) XTrace.WriteLine("开始初始化SysBrowsinglog[浏览日志]数据……");
+            var i = FindCount();
 
-        //    var entity = new SysBrowsinglog();
-        //    entity.ID = 0;
-        //    entity.BigType = 0;
-        //    entity.SmallType = 0;
-        //    entity.Url = "abc";
-        //    entity.Remark = "abc";
-        //    entity.Ip = "abc";
-        //    entity.Mac = "abc";
-        //    entity.OperationID = 0;
-        //    entity.OperationAccountName = "abc";
-        //    entity.OperationTime = DateTime.Now;
-        //    entity.Insert();
+            if (XTrace.Debug) XTrace.WriteLine("开始初始化SysBrowsinglog[浏览日志]数据……");
 
-        //    if (XTrace.Debug) XTrace.WriteLine("完成初始化SysBrowsinglog[浏览日志]数据！");
-        //}
+            var entity = new SysBrowsinglog();
+            entity.ID = 0;
+            entity.BigType = 0;
+            entity.SmallType = 0;
+            entity.Url = "abc";
+            entity.Remark = "abc";
+            entity.Ip = "abc";
+            entity.Mac = "abc";
+            entity.OperationID = 0;
+            entity.OperationAccountName = "abc";
+            entity.OperationTime = DateTime.Now;
+            entity.Insert();
+
+            if (XTrace.Debug) XTrace.WriteLine("完成初始化SysBrowsinglog[浏览日志]数据！");
+        }
 
         ///// <summary>已重载。基类先调用Valid(true)验证数据，然后在事务保护内调用OnInsert</summary>
         ///// <returns></returns>
@@ -92,10 +97,16 @@ namespace TestWeb
         //{
         //    return base.OnDelete();
         //}
+
         #endregion
 
+
+
         #region 扩展属性
+
         #endregion
+
+
 
         #region 扩展查询
         /// <summary>根据主键ID查找</summary>

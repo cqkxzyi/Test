@@ -35,10 +35,10 @@ namespace TestWeb
             Meta.Modules.Add<TimeModule>();
             Meta.Modules.Add<IPModule>();
 
-            // 单对象缓存
+            // 设置从键缓存
             var sc = Meta.SingleCache;
-            sc.FindSlaveKeyMethod = k => Find(__.ID, k);
-            sc.GetSlaveKeyMethod = e => e.Ip;
+            sc.FindSlaveKeyMethod = k => Find(__.Mac, k);
+            sc.GetSlaveKeyMethod = e => e.Mac;
 
         }
 
@@ -64,9 +64,10 @@ namespace TestWeb
             if (Meta.Session.Count > 0) 
                 return;
 
-            var i = FindCount();
+            var count = FindCount();
 
-            if (XTrace.Debug) XTrace.WriteLine("开始初始化SysBrowsinglog[浏览日志]数据……");
+            if (XTrace.Debug) 
+                XTrace.WriteLine("开始初始化SysBrowsinglog[浏览日志]数据……");
 
             var entity = new SysBrowsinglog();
             entity.ID = 0;
@@ -81,7 +82,8 @@ namespace TestWeb
             entity.OperationTime = DateTime.Now;
             entity.Insert();
 
-            if (XTrace.Debug) XTrace.WriteLine("完成初始化SysBrowsinglog[浏览日志]数据！");
+            if (XTrace.Debug) 
+                XTrace.WriteLine("完成初始化SysBrowsinglog[浏览日志]数据！");
         }
 
         ///// <summary>已重载。基类先调用Valid(true)验证数据，然后在事务保护内调用OnInsert</summary>
@@ -117,7 +119,8 @@ namespace TestWeb
             if (id <= 0) return null;
 
             // 实体缓存
-            if (Meta.Session.Count < 1000) return Meta.Cache.Find(e => e.ID == id);
+            if (Meta.Session.Count < 1000) 
+                return Meta.Cache.Find(e => e.ID == id);
 
             // 单对象缓存
             return Meta.SingleCache[id];

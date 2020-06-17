@@ -1,10 +1,14 @@
-﻿using NewLife.Log;
+﻿using NewLife.Collections;
+using NewLife.Log;
+using NewLife.Security;
 using NewLife.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using XCode;
 using XCode.DataAccessLayer;
 
 namespace TestWeb.Controllers
@@ -35,11 +39,22 @@ namespace TestWeb.Controllers
 
            var model = SysBrowsinglog.Find(SysBrowsinglog._.Remark,"'");
 
+            //where参数化
+            var exp =new WhereExpression();
+            exp &= SysBrowsinglog._.ID > 0;
+            exp &= SysBrowsinglog._.OperationTime > "2020-01-01";
+            exp += SysBrowsinglog._.ID.GroupBy();
+            exp.GroupBy(SysBrowsinglog._.ID);
+            SysBrowsinglog.FindAll(exp,null,"ID");
+
+
             var dal = DAL.Create("MSSQL");
             var db = dal.Query("select * from SYS_BrowsingLog where id>2");
             var list = SysBrowsinglog.LoadData(db);
 
-            //表结构
+
+            var a = Pool.StringBuilder.Get();
+            a.Separate(",").Append("{0}={1}".F());//表结构
             var tables=dal.Tables;
             string tables_str = tables.ToJson(true);
             XTrace.WriteLine(tables_str);
@@ -76,6 +91,23 @@ namespace TestWeb.Controllers
 
             //高级查询
             list = SysBrowsinglog.Search();
+
+        }
+
+        public void TestCache() {
+            SysBrowsinglog.Meta.Session.Dal.Session.ShowSQL = false;
+
+            var ids = Enumerable.Range(0, 20).Select(e => Rand.Next(100)).ToList();
+            var count = 1000000;
+            var sw = Stopwatch.StartNew();
+            foreach (var item in ids)
+            {
+                var ent = SysBrowsinglog.FindByID(item);
+
+            }
+            sw.Stop();
+
+            var ms = sw.Elapsed.TotalSeconds;
 
         }
 

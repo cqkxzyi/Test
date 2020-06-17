@@ -41,7 +41,10 @@ module.exports = {
         }
     },
     plugins: [ //插件配置区域
-        //new Webpack.ProgressPlugin(),//可有可无
+        new Webpack.DefinePlugin({//环境变量配置
+            DEV:JSON.stringify("dev"),
+            FLAG:JSON.stringify("aaaaa")
+        }),
         // HtmlLoader,
         new CleanWebpackPlugin(//文件清理
             { 
@@ -75,7 +78,7 @@ module.exports = {
             $: 'jquery',
             jQuery: 'jquery'
         })
-        ,new Webpack.BannerPlugin("zhangyi 2020-05-13")
+        ,new Webpack.BannerPlugin("zhangyi 2020-05-13于家中")
     ]
     // ,externals:{//忽略模块配置，不打包编译模块   需要页面自行引用js
     //     jquery: 'jquery',

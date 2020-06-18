@@ -24,6 +24,26 @@ module.exports = {
         filename: "[name][hash:6].js",//输出文件名 [hash:5]
         path: path.resolve(__dirname, "build")//必须是绝对路径
         //,publicPath: 'http://www.image.com' 资源前缀
+    },
+    optimization: {
+      minimize: false,
+      splitChunks: {
+        //chunks:"all",
+        cacheGroups: {
+         vendors: {//第三方库
+            name:'vendors',
+            test: /[\\/]node_modules[\\/]/,
+            priority: 1
+         },
+         default: {
+            chunks:"initial",
+            minSize: 0,
+            minChunks: 1,
+            priority: -20,
+            reuseExistingChunk: true
+         }
+       }
+     }
     }
     ,resolve:{//包解析
         modules:[path.resolve("node_modules")]

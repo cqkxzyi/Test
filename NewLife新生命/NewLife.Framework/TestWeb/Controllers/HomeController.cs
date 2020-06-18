@@ -36,14 +36,8 @@ namespace TestWeb.Controllers
             //};
             //int result = log.Save();
 
-           
-            var model = SysBrowsinglog.Find(SysBrowsinglog._.ID==1);
-            model.OperationTime = DateTime.Now;
-            model.Save();
 
-            model = SysBrowsinglog.FindByKey("111");
-            model = SysBrowsinglog.FindByKey(1);
-
+           var model = SysBrowsinglog.Find(SysBrowsinglog._.Remark,"'");
 
             //where参数化
             var exp =new WhereExpression();
@@ -55,14 +49,12 @@ namespace TestWeb.Controllers
 
 
             var dal = DAL.Create("MSSQL");
-            
             var db = dal.Query("select * from SYS_BrowsingLog where id>2");
             var list = SysBrowsinglog.LoadData(db);
 
+
             var a = Pool.StringBuilder.Get();
-            a.Separate(",").Append("{0}={1}".F());
-
-
+            a.Separate(",").Append("{0}={1}".F());//表结构
             var tables=dal.Tables;
             string tables_str = tables.ToJson(true);
             XTrace.WriteLine(tables_str);
@@ -74,7 +66,7 @@ namespace TestWeb.Controllers
                 {
                     SysBrowsinglog add = new SysBrowsinglog()
                     {
-                        Ip = "123.325.3.3"
+                        Ip = "123.325.3.99"
                     };
                     add.Insert();
 
@@ -83,7 +75,7 @@ namespace TestWeb.Controllers
                    
                     SysBrowsinglog add2 = new SysBrowsinglog()
                     {
-                        Ip = "123.325.4.4"
+                        Ip = "123.325.4.44"
                     };
                     add2.Insert();
 
@@ -96,7 +88,10 @@ namespace TestWeb.Controllers
             {
                 XTrace.WriteException(ex);
             }
-            
+
+            //高级查询
+            list = SysBrowsinglog.Search();
+
         }
 
         public void TestCache() {

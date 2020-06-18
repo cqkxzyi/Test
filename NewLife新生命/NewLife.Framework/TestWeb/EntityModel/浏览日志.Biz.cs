@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Script.Serialization;
 using System.Xml.Serialization;
 using NewLife;
+using NewLife.Data;
 using NewLife.Log;
 using XCode;
 using XCode.Cache;
@@ -126,6 +127,28 @@ namespace TestWeb
             return Meta.SingleCache[id];
 
             //return Find(_.ID == id);
+        }
+
+
+        public static IList<SysBrowsinglog> Search()
+        {
+            var exp = _.BigType > 1;
+
+            exp &= _.ID > 2;
+            exp |= _.Remark.Contains("a");
+
+            PageParameter p = new PageParameter()
+            {
+                PageIndex = 0,
+                OrderBy = "ID",
+                Sort = "ID",
+                RetrieveTotalCount = true,
+                RetrieveState =true
+            };
+
+           var result=FindAll(exp,p);
+
+            return result;
         }
         #endregion
 

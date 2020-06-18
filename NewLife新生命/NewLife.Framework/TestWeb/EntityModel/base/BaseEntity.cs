@@ -39,7 +39,6 @@ namespace TestWeb
         /// <param name="selectClause">返回字段</param>
         /// <param name="PageIndex">页码(从1开始)</param>
         /// <param name="PageSize">每页数量</param>
-        /// <param name="PageCount">总数</param>
         /// <returns></returns>
         public static IList<TEntity> GetList(string whereClause, string orderClause, string selectClause, int PageIndex, int PageSize, out int iCount)
         {

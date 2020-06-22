@@ -1,8 +1,8 @@
 {
   "name": "webpack_test",
   "scripts": {
-    "build-prod": "npx webpack --config  webpack.prod.js",
-    "build-dev": "npx webpack --config  webpack.dev.js",
+    "build": "npx webpack --config  webpack.prod.js",
+    "buildd": "npx webpack --config  webpack.dev.js",
     "dev": "npx webpack-dev-server"
   },
   "dependencies": {

@@ -10,12 +10,12 @@ pipeline {
     }
 
     environment {
-        DOCKER_CREDENTIAL_ID = 'dockerhub-id'
-        GITHUB_CREDENTIAL_ID = 'github-id'
-        KUBECONFIG_CREDENTIAL_ID = 'demo-kubeconfig'
-        REGISTRY = 'docker.io'
-        DOCKERHUB_NAMESPACE = 'docker_username'
-        GITHUB_ACCOUNT = 'kubesphere'
+        DOCKER_CREDENTIAL_ID = 'pz-aliyun-dockerhub-id'
+        GITHUB_CREDENTIAL_ID = 'pz-gitee-id'
+        KUBECONFIG_CREDENTIAL_ID = 'pz-kubeconfig'
+        REGISTRY = 'registry.cn-shenzhen.aliyuncs.com'
+        DOCKERHUB_NAMESPACE = 'cqkxzyi'
+        GITHUB_ACCOUNT = 'cqkxzyi'
         APP_NAME = 'devops-java-sample'
     }
 
@@ -42,6 +42,7 @@ pipeline {
                     withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "$DOCKER_CREDENTIAL_ID" ,)]) {
                         sh 'echo "$DOCKER_PASSWORD" | docker login $REGISTRY -u "$DOCKER_USERNAME" --password-stdin'
                         sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER'
+                        sh 'echo "编译 & 推送 成功！"'
                     }
                 }
             }
@@ -64,7 +65,7 @@ pipeline {
             branch 'master'
           }
           steps {
-            input(id: 'deploy-to-dev', message: 'deploy to dev?')
+            //input(id: 'deploy-to-dev', message: 'deploy to dev?')
             container ('maven') {
                 withCredentials([
                     kubeconfigFile(
@@ -76,7 +77,7 @@ pipeline {
             }
           }
         }
-        stage('push with tag'){
+        stage('推送 tag 到 gitee'){
           when{
             expression{
               return params.TAG_NAME =~ /v.*/
@@ -89,7 +90,7 @@ pipeline {
                     sh 'git config --global user.email "kubesphere@yunify.com" '
                     sh 'git config --global user.name "kubesphere" '
                     sh 'git tag -a $TAG_NAME -m "$TAG_NAME" '
-                    sh 'git push http://$GIT_USERNAME:$GIT_PASSWORD@github.com/$GITHUB_ACCOUNT/devops-java-sample.git --tags --ipv4'
+                    sh 'git push http://$GIT_USERNAME:$GIT_PASSWORD@gitee.com/$GITHUB_ACCOUNT/devops-java-sample.git --tags --ipv4'
                   }
                 sh 'docker tag  $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:$TAG_NAME '
                 sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:$TAG_NAME '
@@ -103,7 +104,7 @@ pipeline {
             }
           }
           steps {
-            input(id: 'deploy-to-production', message: 'deploy to production?')
+            input(id: 'deploy-to-production', message: '是否发布生产?')
             container ('maven') {
                 withCredentials([
                     kubeconfigFile(

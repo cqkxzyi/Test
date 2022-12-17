@@ -54,7 +54,6 @@ spec:
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
-
 ---
 apiVersion: v1
 kind: Service

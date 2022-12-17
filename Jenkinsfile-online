@@ -64,7 +64,6 @@ pipeline {
                     {
                         sh 'echo "开始发布测试"'
                         sh 'pwd'
-                        sh 'll'
                         sh 'envsubst < deploy/dev-all-in-one/devops-sample.yaml | kubectl apply -f -'
                     }
             }

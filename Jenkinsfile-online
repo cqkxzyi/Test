@@ -60,7 +60,7 @@ pipeline {
                 withCredentials([
                     kubeconfigFile(
                     credentialsId: env.KUBECONFIG_CREDENTIAL_ID,
-                    variable: 'KUBECONFIG')
+                    variable: 'KUBECONFIG_CONTENT')
                     ])
                     sh '''
                         echo "开始发布测试"

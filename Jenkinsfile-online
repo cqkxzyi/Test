@@ -56,7 +56,7 @@ pipeline {
           steps {
             //input(id: 'deploy-to-dev', message: 'deploy to dev?')
             container ('maven') {
-                sh 'kubectl version --short --client'
+                // sh 'kubectl version --short --client'
                 withCredentials([
                     kubeconfigFile(
                     credentialsId: env.KUBECONFIG_CREDENTIAL_ID,

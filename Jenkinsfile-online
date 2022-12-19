@@ -11,7 +11,6 @@ pipeline {
 
     environment {
         a='张毅'
-        b = "${sh(script:'ls -lah', returnStdout: true).trim()}"
         DOCKER_CREDENTIAL_ID = 'pz-aliyun-dockerhub-id'
         GITHUB_CREDENTIAL_ID = 'pz-gitee-id'
         KUBECONFIG_CREDENTIAL_ID = 'pz-kubeconfig'
@@ -24,20 +23,23 @@ pipeline {
     stages {
         stage ('拉取代码') {
             steps {
-                echo "b = ${env.b}"
                 echo "带 env 的读取方式：${env.a},不带 env 的读取方式：${a}"
                 sh 'echo shell中读取方式：$a'
 
                 sh '''
                     echo "开始测试3个单引号"
-                    echo ${a}
-                    echo 环境变量a=$a
+                     \$str = 'Hello world'
+                                        echo 变量str=$str
+                                        $str2 = 'Hello world'
+                                        echo 变量str2=$str2
                    '''
 
                 sh """
                     echo "开始测试3个双引号"
-                    echo ${a}
-                    echo 环境变量a=$a
+                    \$str = 'Hello world'
+                    echo 变量str=$str
+                    $str2 = 'Hello world'
+                    echo 变量str2=$str2
                    """
 
                 echo "即将拉取代码"
@@ -77,9 +79,6 @@ pipeline {
                 sh 'kubectl version --short --client'
                 withCredentials([kubeconfigFile(credentialsId: env.KUBECONFIG_CREDENTIAL_ID,variable: 'KUBECONFIG')]) {
                       sh '''
-                        echo "开始发布测试"
-                        mkdir ~/.kube
-                        echo "$KUBECONFIG_CONTENT" > ~/.kube/config
                         envsubst < deploy/dev-all-in-one/devops-sample.yaml | kubectl apply -f -
                        '''
                     }

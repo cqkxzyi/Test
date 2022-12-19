@@ -18,6 +18,7 @@ pipeline {
         GITHUB_ACCOUNT = 'cqkxzyi'
         APP_NAME = 'devops-java-sample'
     }
+    def a=123
 
     stages {
         stage ('checkout scm') {
@@ -30,6 +31,19 @@ pipeline {
             steps {
                 container ('maven') {
                     sh 'mvn clean test'
+                    sh 'echo 环境变量REGISTRY=$REGISTRY'
+
+                    sh '''
+                        echo "开始测试3个单引号"
+                        echo ${a}
+                        echo 环境变量REGISTRY=$REGISTRY
+                       '''
+
+                    sh """
+                        echo "开始测试3个双引号"
+                        echo ${a}
+                        echo 环境变量REGISTRY=$REGISTRY
+                       """
                 }
             }
         }

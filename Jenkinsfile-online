@@ -28,10 +28,12 @@ pipeline {
 
                 sh '''
                     echo "开始测试3个单引号"
-                     \$str = 'Hello world'
-                                        echo 变量str=$str
-                                        $str2 = 'Hello world'
-                                        echo 变量str2=$str2
+                    $str = 'Hello world'
+                    echo 变量str=$str
+                    $str2 = 'Hello world2'
+                    echo 变量str2=$str2
+                    str3 = 'Hello world3'
+                    echo 变量str3=$str3
                    '''
 
                 sh """
@@ -47,7 +49,7 @@ pipeline {
             }
         }
 
-        stage ('unit test') {
+        stage ('单元测试') {
             steps {
                 container ('maven') {
                     sh 'mvn clean test'

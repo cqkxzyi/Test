@@ -52,7 +52,7 @@ pipeline {
             }
         }
  
-        stage ('build & push') {
+        stage ('编译 & 推送') {
             steps {
                 container ('maven') {
                     sh 'mvn clean package -DskipTests'
@@ -72,9 +72,8 @@ pipeline {
             branch 'master'
           }
           steps {
-            //input(id: 'deploy-to-dev', message: 'deploy to dev?')
             container ('maven') {
-                // sh 'kubectl version --short --client'
+                sh 'kubectl version --short --client'
                 withCredentials([kubeconfigFile(credentialsId: env.KUBECONFIG_CREDENTIAL_ID,variable: 'KUBECONFIG_CONTENT')]) {
                       sh '''
                         echo "开始发布测试"

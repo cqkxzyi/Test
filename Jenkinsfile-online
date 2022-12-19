@@ -10,7 +10,7 @@ pipeline {
     }
 
     environment {
-        a='我的名字叫张毅'
+        a='张毅'
         DOCKER_CREDENTIAL_ID = 'pz-aliyun-dockerhub-id'
         GITHUB_CREDENTIAL_ID = 'pz-gitee-id'
         KUBECONFIG_CREDENTIAL_ID = 'pz-kubeconfig'
@@ -21,7 +21,7 @@ pipeline {
     }
 
     stages {
-        stage ('checkout scm') {
+        stage ('拉取代码') {
             steps {
                 echo "带 env 的读取方式：${env.a}"
                 echo "不带 env 的读取方式：${a}"
@@ -39,7 +39,7 @@ pipeline {
                     echo 环境变量a=$a
                    """
 
-                echo 即将拉取代码
+                echo "即将拉取代码"
                 checkout(scm)
             }
         }

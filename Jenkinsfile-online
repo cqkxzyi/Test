@@ -11,6 +11,7 @@ pipeline {
 
     environment {
         a='张毅'
+        b = "${sh(script:'ls -lah', returnStdout: true).trim()}"
         DOCKER_CREDENTIAL_ID = 'pz-aliyun-dockerhub-id'
         GITHUB_CREDENTIAL_ID = 'pz-gitee-id'
         KUBECONFIG_CREDENTIAL_ID = 'pz-kubeconfig'
@@ -23,8 +24,8 @@ pipeline {
     stages {
         stage ('拉取代码') {
             steps {
-                echo "带 env 的读取方式：${env.a}"
-                echo "不带 env 的读取方式：${a}"
+                echo "b = ${env.b}"
+                echo "带 env 的读取方式：${env.a},不带 env 的读取方式：${a}"
                 sh 'echo shell中读取方式：$a'
 
                 sh '''
@@ -74,7 +75,7 @@ pipeline {
           steps {
             container ('maven') {
                 sh 'kubectl version --short --client'
-                withCredentials([kubeconfigFile(credentialsId: env.KUBECONFIG_CREDENTIAL_ID,variable: 'KUBECONFIG_CONTENT')]) {
+                withCredentials([kubeconfigFile(credentialsId: env.KUBECONFIG_CREDENTIAL_ID,variable: 'KUBECONFIG')]) {
                       sh '''
                         echo "开始发布测试"
                         mkdir ~/.kube

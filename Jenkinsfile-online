@@ -28,25 +28,13 @@ pipeline {
 
                 sh """
                     echo 开始测试3个双引号
-                    $str = Hello world
-                    echo 变量str=$str
-                    $str2 = Hello world2
-                    echo 变量str2=$str2
-                    str3 = Hello world3
-                    echo 变量str3=$str3
+                    echo $a
                    """
 
-                    sh '''
-                       echo "开始测试3个单引号"
-                       aa = "aaaaaa"
-                       echo 变量aa=$aa
-                       $str = "Hello world"
-                       echo 变量str=$str
-                       $str2 = "Hello world2"
-                       echo 变量str2=$str2
-                       str3 = "Hello world3"
-                       echo 变量str3=$str3
-                      '''
+                sh '''
+                   echo "开始测试3个单引号"
+                   echo $a
+                  '''
 
                 echo "即将拉取代码"
                 checkout(scm)

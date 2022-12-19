@@ -27,15 +27,8 @@ pipeline {
                 sh 'echo shell中读取方式：$a'
 
                 sh """
-                    echo "开始测试3个双引号"
-                    aa = 'aaaaaa'
-                    echo 变量aa=$aa
-                    $str = 'Hello world'
-                    echo 变量str=$str
-                    $str2 = 'Hello world2'
-                    echo 变量str2=$str2
-                    str3 = 'Hello world3'
-                    echo 变量str3=$str3
+                    echo 开始测试3个双引号
+
                    """
 
                     sh '''

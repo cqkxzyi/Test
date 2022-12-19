@@ -10,7 +10,7 @@ pipeline {
     }
 
     environment {
-        a='我是变量a'
+        a='我的名字叫张毅'
         DOCKER_CREDENTIAL_ID = 'pz-aliyun-dockerhub-id'
         GITHUB_CREDENTIAL_ID = 'pz-gitee-id'
         KUBECONFIG_CREDENTIAL_ID = 'pz-kubeconfig'
@@ -25,8 +25,21 @@ pipeline {
             steps {
                 echo "带 env 的读取方式：${env.a}"
                 echo "不带 env 的读取方式：${a}"
-                sh 'echo "shell 中读取方式 $a"'
+                sh 'echo shell中读取方式：$a'
 
+                sh '''
+                    echo "开始测试3个单引号"
+                    echo ${a}
+                    echo 环境变量a=$a
+                   '''
+
+                sh """
+                    echo "开始测试3个双引号"
+                    echo ${a}
+                    echo 环境变量a=$a
+                   """
+
+                echo 即将拉取代码
                 checkout(scm)
             }
         }
@@ -35,19 +48,6 @@ pipeline {
             steps {
                 container ('maven') {
                     sh 'mvn clean test'
-                    sh 'echo 环境变量a=$a'
-
-                    sh '''
-                        echo "开始测试3个单引号"
-                        echo ${a}
-                        echo 环境变量a=$a
-                       '''
-
-                    sh """
-                        echo "开始测试3个双引号"
-                        echo ${a}
-                        echo 环境变量a=$a
-                       """
                 }
             }
         }
